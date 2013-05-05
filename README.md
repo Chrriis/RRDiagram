@@ -95,3 +95,8 @@ The supported BNF subset when reading is the following:
 </pre>
 
 When getting the BNF syntax from the grammar model, it is possible to tweak the kind of BNF to get by changing some options on the converter.
+
+License
+=======
+
+This library is provided under the LGPL, version 2.1 or later.
