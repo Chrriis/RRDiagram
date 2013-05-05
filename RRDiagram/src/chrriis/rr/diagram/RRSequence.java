@@ -12,8 +12,6 @@ package chrriis.rr.diagram;
  */
 public class RRSequence extends RRElement {
 
-  private static final int SPACING = 10;
-
   private RRElement[] rrElements;
 
   public RRSequence(RRElement... rrElements) {
@@ -33,7 +31,7 @@ public class RRSequence extends RRElement {
       RRElement rrElement = rrElements[i];
       rrElement.computeLayoutInfo(rrDiagramToSVG);
       if(i > 0) {
-        width += SPACING;
+        width += 10;
       }
       LayoutInfo layoutInfo = rrElement.getLayoutInfo();
       width += layoutInfo.getWidth();
@@ -58,10 +56,10 @@ public class RRSequence extends RRElement {
       int xOffset2 = widthOffset + xOffset;
       int yOffset2 = yOffset + connectorOffset - connectorOffset2;
       if(i > 0) {
-        sb.append("<line class=\"connector\" x1=\"").append(xOffset2 - SPACING).append("\" y1=\"").append(yOffset + connectorOffset).append("\" x2=\"").append(xOffset2).append("\" y2=\"").append(yOffset + connectorOffset).append("\"/>\n");
+        sb.append("<line class=\"connector\" x1=\"").append(xOffset2 - 10).append("\" y1=\"").append(yOffset + connectorOffset).append("\" x2=\"").append(xOffset2).append("\" y2=\"").append(yOffset + connectorOffset).append("\"/>\n");
       }
       rrElement.toSVG(rrDiagramToSVG, xOffset2, yOffset2, sb);
-      widthOffset += SPACING;
+      widthOffset += 10;
       widthOffset += width2;
     }
   }

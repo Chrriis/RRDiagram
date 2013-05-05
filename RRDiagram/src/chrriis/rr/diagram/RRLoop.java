@@ -43,15 +43,18 @@ public class RRLoop extends RRElement {
 
   private String cardinalitiesText;
   private int cardinalitiesWidth;
-  private int fontOffset;
+  private int fontYOffset;
 
   @Override
   protected void computeLayoutInfo(RRDiagramToSVG rrDiagramToSVG) {
+    cardinalitiesText = null;
+    cardinalitiesWidth = 0;
+    fontYOffset = 0;
     if(minRepetitionCount > 0 || maxRepetitionCount != null) {
       cardinalitiesText = minRepetitionCount + ".." + (maxRepetitionCount == null? "N": maxRepetitionCount);
       FontRenderContext fontRenderContext = new FontRenderContext(null, true, false);
       Font font = new Font("Verdana", Font.PLAIN, 12);
-      fontOffset = Math.round(font.getLineMetrics(cardinalitiesText, fontRenderContext).getDescent());
+      fontYOffset = Math.round(font.getLineMetrics(cardinalitiesText, fontRenderContext).getDescent());
       Rectangle2D stringBounds = font.getStringBounds(cardinalitiesText, fontRenderContext);
       cardinalitiesWidth = (int)Math.round(stringBounds.getWidth()) + 2;
 
@@ -122,7 +125,7 @@ public class RRLoop extends RRElement {
     sb.append("\"/>\n");
     sb.append("<line class=\"connector\" x1=\"").append(x2 - cardinalitiesWidth - 10 - (maxWidth - width1) / 2).append("\" y1=\"").append(y2).append("\" x2=\"").append(xOffset + layoutInfo.getWidth()).append("\" y2=\"").append(y2).append("\"/>\n");
     if(cardinalitiesText != null) {
-      sb.append("<text class=\"desc\" x=\"").append(x2 - cardinalitiesWidth).append("\" y=\"").append(y2 - fontOffset - 5).append("\">").append(cardinalitiesText).append("</text>");
+      sb.append("<text class=\"desc\" x=\"").append(x2 - cardinalitiesWidth).append("\" y=\"").append(y2 - fontYOffset - 5).append("\">").append(cardinalitiesText).append("</text>");
     }
   }
 
