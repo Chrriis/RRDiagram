@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<project name="Build Script" default="createJavadoc" basedir="..">
+
+  <target name="createJavadoc" description="Create the javadoc">
+    <delete dir="documentation/javadoc"/>
+    <javadoc destdir="documentation/javadoc" windowtitle="RR Diagram">
+      <packageset dir="src">
+        <include name="chrriis/**"/>
+      </packageset>
+      <link offline="true" href="http://java.sun.com/javase/6/docs/api/" packagelistloc="documentation/javadoc-package-lists/jdk"/>
+    </javadoc>
+  </target>
+
+</project>

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<project name="Build Script" default="createRelease" basedir="..">
+
+  <target name="createRelease" description="Create the release">
+    <delete file="RRDiagram.zip"/>
+    <ant antfile="documentation/build.xml" inheritall="false"/>
+    <ant antfile="build.xml" inheritall="false"/>
+    <zip duplicate="preserve" destfile="Release/RRDiagram.zip">
+      <!-- Documents -->
+      <zipfileset dir="." includes="licence.txt"/>
+      <zipfileset dir="Release" includes="readme.txt,changelog.txt"/>
+      <!-- Binaries -->
+      <zipfileset dir="../RRDiagram" includes="RRDiagram.jar"/>
+      <!-- Library sources -->
+      <zipfileset dir="../RRDiagram/src" prefix="src"/>
+      <!-- Documentation -->
+      <zipfileset dir="documentation/javadoc" prefix="api"/>
+    </zip>
+  </target>
+
+</project>

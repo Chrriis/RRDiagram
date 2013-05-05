@@ -1,0 +1,12 @@
+RR Diagram
+https://github.com/Chrriis/RRDiagram
+Christopher Deckers (chrriis@nextencia.net)
+Licence terms: LGPL (see licence.txt)
+
+---------------------------------- Change log ----------------------------------
+
+* Version x.x.x (xxxxxxxxxxxx):
+
+- Generate SVG from diagram model.
+- Convert from grammar model to diagram model.
+- Convert BNF to grammar model and grammar model to BNF.
