@@ -24,6 +24,7 @@ public class BNFToGrammar {
     ALTERNATION,
     GROUP,
     COMMENT,
+    SPECIAL_SEQUENCE,
     LITERAL,
     OPTION,
     REPETITION,
@@ -231,6 +232,9 @@ public class BNFToGrammar {
         case LITERAL: {
           return new Literal(text);
         }
+        case SPECIAL_SEQUENCE: {
+          return new SpecialSequence(text);
+        }
         case OPTION: {
           if(chunkList.size() == 1) {
             Chunk subChunk = chunkList.get(0);
@@ -308,7 +312,8 @@ public class BNFToGrammar {
     char lastChar = 0;
     StringBuilder sb = new StringBuilder();
     boolean isFirst = true;
-    boolean isComment = false;
+    boolean isInSpecialGroup = false;
+    char specialGroupChar = 0;
     boolean isLiteral = parentChunk.getType() == ChunkType.LITERAL;
     for(int x; (x=reader.read()) != -1; ) {
       char c = (char)x;
@@ -320,22 +325,33 @@ public class BNFToGrammar {
         }
         sb.append(c);
       } else {
-        if(isFirst && parentChunk.getType() == ChunkType.GROUP && c == '*') {
-          isComment = true;
+        if(isFirst && parentChunk.getType() == ChunkType.GROUP) {
+          switch(c) {
+            case '*':
+              isInSpecialGroup = true;
+              specialGroupChar = c;
+              break;
+            case '?':
+              isInSpecialGroup = true;
+              specialGroupChar = c;
+              break;
+          }
         }
         isFirst = false;
-        if(isComment) {
-          if(c == ')' && lastChar == '*') {
+        if(isInSpecialGroup) {
+          if(c == ')' && lastChar == specialGroupChar) {
             // Mutate parent group
-            parentChunk.setType(ChunkType.COMMENT);
+            switch(specialGroupChar) {
+              case '*': parentChunk.setType(ChunkType.COMMENT); break;
+              case '?': parentChunk.setType(ChunkType.SPECIAL_SEQUENCE); break;
+            }
             String comment = sb.toString();
-            comment = comment.substring(0, comment.length() - 1).trim();
+            comment = comment.substring(1, comment.length() - 1).trim();
             parentChunk.setText(comment);
             return;
-          } else {
-            if(sb.length() > 0 || !Character.isWhitespace(c)) {
-              sb.append(c);
-            }
+          }
+          if(sb.length() > 0 || !Character.isWhitespace(c)) {
+            sb.append(c);
           }
         } else {
           if(c == stopChar) {

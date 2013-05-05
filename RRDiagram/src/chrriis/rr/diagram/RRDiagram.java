@@ -59,6 +59,7 @@ public class RRDiagram {
     sb.append(".connector {fill: none; stroke: #222222;}\n");
     sb.append(".rule {fill: #D3F0FF; stroke: #222222;}\n");
     sb.append(".literal {fill: #90D9FF; stroke: #222222;}\n");
+    sb.append(".special {fill: #E4F4FF; stroke: #222222;}\n");
     sb.append(".desc {font-family: Verdana, Sans-serif; font-size: 12px;}\n");
     sb.append("</style>");
     sb.append("</defs>\n");
