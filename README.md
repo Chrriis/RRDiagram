@@ -7,6 +7,25 @@ RR Diagram allows to generate railroad diagrams (also called syntax diagrams) fr
 
 RR Diagram can also be used to generate BNF notation from a model.
 
+The generated output was insipired from this online-only version: http://railroad.my28msec.com/rr/ui
+
+Example
+=======
+
+This is the kind of diagrams that can get generated:
+![H2 Select](http://rrdiagram.sourceforge.net/H2Select.svg)
+
+The above is generated using the right converters options using this BNF:
+<pre>
+H2_SELECT = 
+'SELECT' [ 'TOP' term ] [ 'DISTINCT' | 'ALL' ] selectExpression {',' selectExpression} \
+'FROM' tableExpression {',' tableExpression} [ 'WHERE' expression ] \
+[ 'GROUP BY' expression {',' expression} ] [ 'HAVING' expression ] \
+[ ( 'UNION' [ 'ALL' ] | 'MINUS' | 'EXCEPT' | 'INTERSECT' ) select ] [ 'ORDER BY' order {',' order} ] \
+[ 'LIMIT' expression [ 'OFFSET' expression ] [ 'SAMPLE_SIZE' rowCountInt ] ] \
+[ 'FOR UPDATE' ];
+</pre>
+
 Usage
 =====
 
