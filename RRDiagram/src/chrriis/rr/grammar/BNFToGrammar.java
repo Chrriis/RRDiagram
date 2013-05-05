@@ -282,21 +282,43 @@ public class BNFToGrammar {
     List<Rule> ruleList = new ArrayList<Rule>();
     for(int x; (x=reader.read()) != -1; ) {
       char c = (char)x;
-      if(c == '=') {
-        Chunk chunk = new Chunk(ChunkType.GROUP);
-        loadExpression(chunk, reader, ';');
-        String ruleName = sb.toString();
-        sb.delete(0, sb.length());
-        if(ruleName.endsWith(":")) {
-          ruleName = ruleName.substring(0, ruleName.length() - 1);
+      switch(c) {
+        case '=': {
+          Chunk chunk = new Chunk(ChunkType.GROUP);
+          loadExpression(chunk, reader, ';');
+          String ruleName = sb.toString();
+          sb.delete(0, sb.length());
           if(ruleName.endsWith(":")) {
             ruleName = ruleName.substring(0, ruleName.length() - 1);
+            if(ruleName.endsWith(":")) {
+              ruleName = ruleName.substring(0, ruleName.length() - 1);
+            }
           }
+          ruleName = ruleName.trim();
+          ruleList.add(createRule(ruleName, chunk));
+          break;
         }
-        ruleName = ruleName.trim();
-        ruleList.add(createRule(ruleName, chunk));
-      } else if(!Character.isWhitespace(c) || sb.length() > 0) {
-        sb.append(c);
+        // Consider that '(' in rule name is start of a comment.
+        case '(': {
+          if(reader.read() != '*') {
+            throw new IllegalStateException("Expecting start of a comment after '(' but could not find '*'!");
+          }
+          char lastChar = 0;
+          for(int x2; (x2=reader.read()) != -1; ) {
+            char c2 = (char)x2;
+            if(c2 == ')' && lastChar == '*') {
+              break;
+            }
+            lastChar = c2;
+          }
+          break;
+        }
+        default: {
+          if(!Character.isWhitespace(c) || sb.length() > 0) {
+            sb.append(c);
+          }
+          break;
+        }
       }
     }
     return new Grammar(ruleList.toArray(new Rule[0]));
