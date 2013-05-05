@@ -103,7 +103,7 @@ public class RRLoop extends RRElement {
     int x1 = xOffset + 10;
     int x2 = xOffset + 20 + maxWidth + 10 + cardinalitiesWidth;
     int y2 = yOffset + connectorOffset;
-    sb.append("<line class=\"connector\" x1=\"").append(x1 - 10).append("\" y1=\"").append(y2).append("\" x2=\"").append(x1 + 10).append("\" y2=\"").append(y2).append("\"/>\n");
+    sb.append("<line class=\"connector\" x1=\"").append(x1 - 10).append("\" y1=\"").append(y2).append("\" x2=\"").append(x1 + 10 + (maxWidth - width1) / 2).append("\" y2=\"").append(y2).append("\"/>\n");
     sb.append("<path class=\"connector\" d=\"");
     sb.append("M ").append(x1 + 5).append(" ").append(y2);
     sb.append(" Q ").append(x1).append(" ").append(y2).append(" ").append(x1).append(" ").append(y2 - 5);
@@ -120,7 +120,7 @@ public class RRLoop extends RRElement {
     sb.append(" V ").append(y2 - 5);
     sb.append(" Q ").append(x2).append(" ").append(y2).append(" ").append(x2 - 5).append(" ").append(y2);
     sb.append("\"/>\n");
-    sb.append("<line class=\"connector\" x1=\"").append(x2  - cardinalitiesWidth - 10).append("\" y1=\"").append(y2).append("\" x2=\"").append(xOffset + layoutInfo.getWidth()).append("\" y2=\"").append(y2).append("\"/>\n");
+    sb.append("<line class=\"connector\" x1=\"").append(x2 - cardinalitiesWidth - 10 - (maxWidth - width1) / 2).append("\" y1=\"").append(y2).append("\" x2=\"").append(xOffset + layoutInfo.getWidth()).append("\" y2=\"").append(y2).append("\"/>\n");
     if(cardinalitiesText != null) {
       sb.append("<text class=\"desc\" x=\"").append(x2 - cardinalitiesWidth).append("\" y=\"").append(y2 - fontOffset - 5).append("\">").append(cardinalitiesText).append("</text>");
     }
