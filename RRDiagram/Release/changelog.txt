@@ -7,6 +7,7 @@ Licence terms: LGPL (see licence.txt)
 
 * Version 0.9.2 (xxxxxxxxxxx):
 
+- Noop is removed, empty sequence replaces it.
 - Package names are changed to better reflect intent of API.
 - Support for special sequence, using "(? ... ?)" instead of "? ... ?" though.
 - Support "(* ... *)" comments when reading BNF.

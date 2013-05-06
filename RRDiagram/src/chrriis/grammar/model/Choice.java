@@ -42,7 +42,7 @@ public class Choice extends Expression {
     List<Expression> expressionList = new ArrayList<Expression>();
     boolean hasNoop = false;
     for(Expression expression: expressions) {
-      if(expression instanceof Noop) {
+      if(expression instanceof Sequence && ((Sequence)expression).getExpressions().length == 0) {
         hasNoop = true;
       } else {
         expressionList.add(expression);

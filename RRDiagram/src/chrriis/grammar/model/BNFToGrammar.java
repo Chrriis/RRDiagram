@@ -183,7 +183,7 @@ public class BNFToGrammar {
         case GROUP: {
           if(chunkList == null) {
             // Group is empty.
-            return new Noop();
+            return new Sequence();
           }
           if(chunkList.size() == 1) {
             return chunkList.get(0).getExpression();
@@ -221,8 +221,8 @@ public class BNFToGrammar {
               expressionList.add(expression);
             }
           }
-          if(hasLine && (expressionList.isEmpty() || !(expressionList.get(expressionList.size() - 1) instanceof Noop))) {
-            expressionList.add(new Noop());
+          if(hasLine && (expressionList.isEmpty() || !isNoop(expressionList.get(expressionList.size() - 1)))) {
+            expressionList.add(new Sequence());
           }
           return new Choice(expressionList.toArray(new Expression[0]));
         }
@@ -275,6 +275,10 @@ public class BNFToGrammar {
       }
       return s;
     }
+  }
+
+  private static boolean isNoop(Expression expression) {
+    return expression instanceof Sequence && ((Sequence)expression).getExpressions().length == 0;
   }
 
   public Grammar convert(Reader reader) throws IOException {
