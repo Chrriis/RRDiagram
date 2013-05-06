@@ -11,7 +11,8 @@ import java.awt.Font;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 
-import chrriis.grammar.rrdiagram.RRDiagram.SvgUsage;
+import chrriis.common.Utils;
+import chrriis.grammar.rrdiagram.RRDiagram.SvgContent;
 
 /**
  * @author Christopher Deckers
@@ -82,7 +83,7 @@ public class RRLoop extends RRElement {
   }
 
   @Override
-  protected void toSVG(RRDiagramToSVG rrDiagramToSVG, int xOffset, int yOffset, StringBuilder sb, SvgUsage svgUsage) {
+  protected void toSVG(RRDiagramToSVG rrDiagramToSVG, int xOffset, int yOffset, SvgContent svgContent) {
     LayoutInfo layoutInfo1 = rrElement.getLayoutInfo();
     int width1 = layoutInfo1.getWidth();
     int maxWidth = width1;
@@ -107,32 +108,31 @@ public class RRLoop extends RRElement {
     int x1 = xOffset + 10;
     int x2 = xOffset + 20 + maxWidth + 10 + cardinalitiesWidth;
     int y2 = yOffset + connectorOffset;
-    sb.append("<line class=\"").append(RRDiagram.CSS_CONNECTOR_CLASS).append("\" x1=\"").append(x1 - 10).append("\" y1=\"").append(y2).append("\" x2=\"").append(x1 + 10 + (maxWidth - width1) / 2).append("\" y2=\"").append(y2).append("\"/>").append(RRDiagram.SVG_ELEMENTS_SEPARATOR);
-    sb.append("<path class=\"").append(RRDiagram.CSS_CONNECTOR_CLASS).append("\" d=\"");
-    sb.append("M ").append(x1 + 5).append(" ").append(y2);
-    sb.append(" Q ").append(x1).append(" ").append(y2).append(" ").append(x1).append(" ").append(y2 - 5);
-    sb.append(" V ").append(y1 + 5);
-    sb.append(" Q ").append(x1).append(" ").append(y1).append(" ").append(x1 + 5).append(" ").append(y1);
+    svgContent.addLineConnector(x1 - 10, y2, x1 + 10 + (maxWidth - width1) / 2, y2);
+    StringBuilder pathSB = new StringBuilder();
+    pathSB.append("M ").append(x1 + 5).append(" ").append(y2);
+    pathSB.append(" Q ").append(x1).append(" ").append(y2).append(" ").append(x1).append(" ").append(y2 - 5);
+    pathSB.append(" V ").append(y1 + 5);
+    pathSB.append(" Q ").append(x1).append(" ").append(y1).append(" ").append(x1 + 5).append(" ").append(y1);
     if(loopElement != null) {
-      sb.append(" H ").append(loopOffset);
-      sb.append(" M ").append(loopOffset + loopWidth).append(" ").append(y1);
-      sb.append(" H ").append(x2 - 5);
+      pathSB.append(" H ").append(loopOffset);
+      pathSB.append(" M ").append(loopOffset + loopWidth).append(" ").append(y1);
+      pathSB.append(" H ").append(x2 - 5);
     } else {
-      sb.append(" H ").append(x2 - 5);
+      pathSB.append(" H ").append(x2 - 5);
     }
-    sb.append(" Q ").append(x2).append(" ").append(y1).append(" ").append(x2).append(" ").append(y1 + 5);
-    sb.append(" V ").append(y2 - 5);
-    sb.append(" Q ").append(x2).append(" ").append(y2).append(" ").append(x2 - 5).append(" ").append(y2);
-    sb.append("\"/>").append(RRDiagram.SVG_ELEMENTS_SEPARATOR);
-    sb.append("<line class=\"").append(RRDiagram.CSS_CONNECTOR_CLASS).append("\" x1=\"").append(x2 - cardinalitiesWidth - 10 - (maxWidth - width1) / 2).append("\" y1=\"").append(y2).append("\" x2=\"").append(xOffset + layoutInfo.getWidth()).append("\" y2=\"").append(y2).append("\"/>").append(RRDiagram.SVG_ELEMENTS_SEPARATOR);
-    // Now that connectors are drawn, let's draw the elements.
+    pathSB.append(" Q ").append(x2).append(" ").append(y1).append(" ").append(x2).append(" ").append(y1 + 5);
+    pathSB.append(" V ").append(y2 - 5);
+    pathSB.append(" Q ").append(x2).append(" ").append(y2).append(" ").append(x2 - 5).append(" ").append(y2);
+    svgContent.addPathConnector(pathSB.toString());
+    svgContent.addLineConnector(x2 - cardinalitiesWidth - 10 - (maxWidth - width1) / 2, y2, xOffset + layoutInfo.getWidth(), y2);
     if(loopElement != null) {
-      loopElement.toSVG(rrDiagramToSVG, loopOffset, yOffset, sb, svgUsage);
+      loopElement.toSVG(rrDiagramToSVG, loopOffset, yOffset, svgContent);
     }
-    rrElement.toSVG(rrDiagramToSVG, xOffset + 20 + (maxWidth - width1) / 2, yOffset2, sb, svgUsage);
+    rrElement.toSVG(rrDiagramToSVG, xOffset + 20 + (maxWidth - width1) / 2, yOffset2, svgContent);
     if(cardinalitiesText != null) {
-      svgUsage.setLoopCardinalitiesUsed(true);
-      sb.append("<text class=\"").append(RRDiagram.CSS_LOOP_CARDINALITIES_TEXT_CLASS).append("\" x=\"").append(x2 - cardinalitiesWidth).append("\" y=\"").append(y2 - fontYOffset - 5).append("\">").append(cardinalitiesText).append("</text>").append(RRDiagram.SVG_ELEMENTS_SEPARATOR);
+      svgContent.setLoopCardinalitiesUsed(true);
+      svgContent.addElement("<text class=\"" + RRDiagram.CSS_LOOP_CARDINALITIES_TEXT_CLASS + "\" x=\"" + (x2 - cardinalitiesWidth) + "\" y=\"" + (y2 - fontYOffset - 5) + "\">" + Utils.escapeXML(cardinalitiesText) + "</text>");
     }
   }
 

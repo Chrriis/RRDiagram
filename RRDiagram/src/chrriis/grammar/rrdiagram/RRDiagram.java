@@ -26,7 +26,7 @@ public class RRDiagram {
   }
 
   static final String SVG_ELEMENTS_SEPARATOR = "";//"\n";
-  static final String CSS_CONNECTOR_CLASS = "c";
+  private static final String CSS_CONNECTOR_CLASS = "c";
   static final String CSS_RULE_CLASS = "r";
   static final String CSS_LITERAL_CLASS = "l";
   static final String CSS_SPECIAL_SEQUENCE_CLASS = "s";
@@ -35,33 +35,59 @@ public class RRDiagram {
   static final String CSS_LITERAL_TEXT_CLASS = "lt";
   static final String CSS_SPECIAL_SEQUENCE_TEXT_CLASS = "st";
 
-  public static class SvgUsage {
-    private boolean isLoopUsed;
-    public void setLoopCardinalitiesUsed(boolean isLoopUsed) {
-      this.isLoopUsed = isLoopUsed;
+  public static class SvgContent {
+    private StringBuilder pathSB = new StringBuilder();
+    public void addPathConnector(String path) {
+      if(pathSB.length() > 0) {
+        pathSB.append(' ');
+      }
+      pathSB.append(path);
     }
-    public boolean isLoopUsed() {
-      return isLoopUsed;
+    public void addLineConnector(int x1, int y1, int x2, int y2) {
+      if(x1 == x2) {
+        addPathConnector("M " + x1 + " " + y1 + " V " + y2);
+      } else if(y1 == y2) {
+        addPathConnector("M " + x1 + " " + y1 + " H " + x2);
+      } else {
+        addPathConnector("M " + x1 + " " + y1 + " L " + x2 + " " + y2);
+      }
+    }
+    private String getConnectorElement() {
+      return pathSB.length() == 0? "": "<path class=\"" + CSS_CONNECTOR_CLASS + "\" d=\""+ pathSB + "\"/>" + SVG_ELEMENTS_SEPARATOR;
+    }
+    private StringBuilder elementSB = new StringBuilder();
+    public void addElement(String element) {
+      elementSB.append(element).append(SVG_ELEMENTS_SEPARATOR);
+    }
+    private String getElement() {
+      return elementSB.toString();
+    }
+    private boolean isLoopCardinalitiesUsed;
+    public void setLoopCardinalitiesUsed(boolean isLoopCardinalitiesUsed) {
+      this.isLoopCardinalitiesUsed = isLoopCardinalitiesUsed;
+    }
+    private boolean isLoopCardinalitiesUsed() {
+      return isLoopCardinalitiesUsed;
     }
     private boolean isRuleUsed;
     public void setRuleUsed(boolean isRuleUsed) {
       this.isRuleUsed = isRuleUsed;
     }
-    public boolean isRuleUsed() {
+    private boolean isRuleUsed() {
       return isRuleUsed;
     }
     private boolean isLiteralUsed;
     public void setLiteralUsed(boolean isLiteralUsed) {
       this.isLiteralUsed = isLiteralUsed;
     }
-    public boolean isLiteralUsed() {
+    private boolean isLiteralUsed() {
       return isLiteralUsed;
     }
     private boolean isSpecialSequenceUsed;
     public void setSpecialSequenceUsed(boolean isSpecialSequenceUsed) {
       this.isSpecialSequenceUsed = isSpecialSequenceUsed;
     }
-    public boolean isSpecialSequenceUsed() {
+    private boolean isSpecialSequenceUsed() {
       return isSpecialSequenceUsed;
     }
   }
@@ -98,9 +124,8 @@ public class RRDiagram {
       width = Math.max(width, 5 + layoutInfo.getWidth() + 5);
       height += layoutInfo.getHeight() + 5;
     }
-    SvgUsage svgUsage = new SvgUsage();
+    SvgContent svgContent = new SvgContent();
     // First, generate the XML for the elements, to know the usage.
-    StringBuilder elementsSB = new StringBuilder();
     int xOffset = 0;
     int yOffset = 5;
 //    sb.append("<rect fill=\"#FFFFFF\" stroke=\"#FF0000\" x1=\"0\" y1=\"0\" width=\"").append(width).append("\" height=\"").append(height).append("\"/>").append(SVG_ELEMENTS_SEPARATOR);
@@ -110,10 +135,10 @@ public class RRDiagram {
       int width2 = layoutInfo2.getWidth();
       int height2 = layoutInfo2.getHeight();
       int y1 = yOffset + connectorOffset2;
-      elementsSB.append("<line class=\"").append(CSS_CONNECTOR_CLASS).append("\" x1=\"").append(xOffset).append("\" y1=\"").append(y1).append("\" x2=\"").append(xOffset + 5).append("\" y2=\"").append(y1).append("\"/>").append(SVG_ELEMENTS_SEPARATOR);
-      elementsSB.append("<line class=\"").append(CSS_CONNECTOR_CLASS).append("\" x1=\"").append(xOffset + 5 + width2).append("\" y1=\"").append(y1).append("\" x2=\"").append(xOffset + 5 + width2 + 5).append("\" y2=\"").append(y1).append("\"/>").append(SVG_ELEMENTS_SEPARATOR);
+      svgContent.addLineConnector(xOffset, y1, xOffset + 5, y1);
+      svgContent.addLineConnector(xOffset + 5 + width2, y1, xOffset + 5 + width2 + 5, y1);
       // TODO: add decorations (like arrows)?
-      rrElement.toSVG(rrDiagramToSVG, xOffset + 5, yOffset, elementsSB, svgUsage);
+      rrElement.toSVG(rrDiagramToSVG, xOffset + 5, yOffset, svgContent);
       yOffset += height2 + 10;
     }
     // Then generate the rest (CSS and SVG container tags) based on that usage.
@@ -123,7 +148,7 @@ public class RRDiagram {
     sb.append("<style type=\"text/css\">").append(SVG_ELEMENTS_SEPARATOR);
     String connectorColor = Utils.convertColorToHtml(rrDiagramToSVG.getConnectorColor());
     sb.append(".").append(CSS_CONNECTOR_CLASS).append(" {fill: none; stroke: ").append(connectorColor).append(";}").append(cssElementSeparator);
-    if(svgUsage.isRuleUsed()) {
+    if(svgContent.isRuleUsed()) {
       String ruleBorderColor = Utils.convertColorToHtml(rrDiagramToSVG.getRuleBorderColor());
       String ruleFillColor = Utils.convertColorToHtml(rrDiagramToSVG.getRuleFillColor());
       Font ruleFont = rrDiagramToSVG.getRuleFont();
@@ -131,7 +156,7 @@ public class RRDiagram {
       sb.append(".").append(CSS_RULE_CLASS).append(" {fill: ").append(ruleFillColor).append("; stroke: ").append(ruleBorderColor).append(";}").append(cssElementSeparator);
       sb.append(".").append(CSS_RULE_TEXT_CLASS).append(" {fill: ").append(ruleTextColor).append("; ").append(Utils.convertFontToCss(ruleFont)).append("}").append(cssElementSeparator);
     }
-    if(svgUsage.isLiteralUsed()) {
+    if(svgContent.isLiteralUsed()) {
       String literalBorderColor = Utils.convertColorToHtml(rrDiagramToSVG.getLiteralBorderColor());
       String literalFillColor = Utils.convertColorToHtml(rrDiagramToSVG.getLiteralFillColor());
       Font literalFont = rrDiagramToSVG.getLiteralFont();
@@ -139,7 +164,7 @@ public class RRDiagram {
       sb.append(".").append(CSS_LITERAL_CLASS).append(" {fill: ").append(literalFillColor).append("; stroke: ").append(literalBorderColor).append(";}").append(cssElementSeparator);
       sb.append(".").append(CSS_LITERAL_TEXT_CLASS).append(" {fill: ").append(literalTextColor).append("; ").append(Utils.convertFontToCss(literalFont)).append("}").append(cssElementSeparator);
     }
-    if(svgUsage.isSpecialSequenceUsed()) {
+    if(svgContent.isSpecialSequenceUsed()) {
       String specialSequenceBorderColor = Utils.convertColorToHtml(rrDiagramToSVG.getSpecialSequenceBorderColor());
       String specialSequenceFillColor = Utils.convertColorToHtml(rrDiagramToSVG.getSpecialSequenceFillColor());
       Font specialSequenceFont = rrDiagramToSVG.getSpecialSequenceFont();
@@ -147,14 +172,15 @@ public class RRDiagram {
       sb.append(".").append(CSS_SPECIAL_SEQUENCE_CLASS).append(" {fill: ").append(specialSequenceFillColor).append("; stroke: ").append(specialSequenceBorderColor).append(";}").append(cssElementSeparator);
       sb.append(".").append(CSS_SPECIAL_SEQUENCE_TEXT_CLASS).append(" {fill: ").append(specialSequenceTextColor).append("; ").append(Utils.convertFontToCss(specialSequenceFont)).append(";}").append(cssElementSeparator);
     }
-    if(svgUsage.isLoopUsed()) {
+    if(svgContent.isLoopCardinalitiesUsed()) {
       Font loopFont = rrDiagramToSVG.getLoopFont();
       String loopTextColor = Utils.convertColorToHtml(rrDiagramToSVG.getLoopTextColor());
       sb.append(".").append(CSS_LOOP_CARDINALITIES_TEXT_CLASS).append(" {fill: ").append(loopTextColor).append("; ").append(Utils.convertFontToCss(loopFont)).append("}").append(cssElementSeparator);
     }
     sb.append("</style>");
     sb.append("</defs>").append(SVG_ELEMENTS_SEPARATOR);
-    sb.append(elementsSB);
+    sb.append(svgContent.getConnectorElement());
+    sb.append(svgContent.getElement());
     sb.append("</svg>");
     return sb.toString();
   }

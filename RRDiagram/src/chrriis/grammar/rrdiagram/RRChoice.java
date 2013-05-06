@@ -7,7 +7,7 @@
  */
 package chrriis.grammar.rrdiagram;
 
-import chrriis.grammar.rrdiagram.RRDiagram.SvgUsage;
+import chrriis.grammar.rrdiagram.RRDiagram.SvgContent;
 
 /**
  * @author Christopher Deckers
@@ -42,46 +42,14 @@ public class RRChoice extends RRElement {
   }
 
   @Override
-  protected void toSVG(RRDiagramToSVG rrDiagramToSVG, int xOffset, int yOffset, StringBuilder sb, SvgUsage svgUsage) {
+  protected void toSVG(RRDiagramToSVG rrDiagramToSVG, int xOffset, int yOffset, SvgContent svgContent) {
     LayoutInfo layoutInfo = getLayoutInfo();
     int y1 = yOffset + layoutInfo.getConnectorOffset();
     int x1 = xOffset + 10;
     int x2 = xOffset + layoutInfo.getWidth() - 10;
-    int y2 = 0;
     int xOffset2 = xOffset + 20;
+    int y2 = 0;
     int yOffset2 = yOffset;
-    sb.append("<path class=\"").append(RRDiagram.CSS_CONNECTOR_CLASS).append("\" d=\"");
-    // We want the connectors first, and then the elements, so that connectors do not show above elements.
-    // This is why we perform the loop twice.
-    for (int i = 0; i < rrElements.length; i++) {
-      RRElement rrElement = rrElements[i];
-      LayoutInfo layoutInfo2 = rrElement.getLayoutInfo();
-      int width = layoutInfo2.getWidth();
-      int height = layoutInfo2.getHeight();
-      y2 = yOffset2 + layoutInfo2.getConnectorOffset();
-      if(i > 0) {
-        // Left
-        sb.append(" M ").append(x1).append(" ").append(y2 - 5);
-        sb.append(" Q ").append(x1).append(" ").append(y2).append(" ").append(x1 + 5).append(" ").append(y2);
-        sb.append(" H ").append(xOffset2);
-        // Right
-        sb.append(" M ").append(x2).append(" ").append(y2 - 5);
-        sb.append(" Q ").append(x2).append(" ").append(y2).append(" ").append(x2 - 5).append(" ").append(y2);
-        sb.append(" H ").append(xOffset2 + width);
-      }
-      yOffset2 += height + 5;
-    }
-    // Left
-    sb.append(" M ").append(x1 - 5).append(" ").append(y1);
-    sb.append(" Q ").append(x1).append(" ").append(y1).append(" ").append(x1).append(" ").append(y1 + 5);
-    sb.append(" V ").append(y2 - 5);
-    // Right
-    sb.append(" M ").append(x2 + 5).append(" ").append(y1);
-    sb.append(" Q ").append(x2).append(" ").append(y1).append(" ").append(x2).append(" ").append(y1 + 5);
-    sb.append(" V ").append(y2 - 5);
-    sb.append("\"/>").append(RRDiagram.SVG_ELEMENTS_SEPARATOR);
-    y2 = 0;
-    yOffset2 = yOffset;
     for (int i = 0; i < rrElements.length; i++) {
       RRElement rrElement = rrElements[i];
       LayoutInfo layoutInfo2 = rrElement.getLayoutInfo();
@@ -89,12 +57,33 @@ public class RRChoice extends RRElement {
       int height = layoutInfo2.getHeight();
       y2 = yOffset2 + layoutInfo2.getConnectorOffset();
       if(i == 0) {
-        sb.append("<line class=\"").append(RRDiagram.CSS_CONNECTOR_CLASS).append("\" x1=\"").append(x1 - 10).append("\" y1=\"").append(y1).append("\" x2=\"").append(x1 + 10).append("\" y2=\"").append(y1).append("\"/>").append(RRDiagram.SVG_ELEMENTS_SEPARATOR);
-        sb.append("<line class=\"").append(RRDiagram.CSS_CONNECTOR_CLASS).append("\" x1=\"").append(xOffset2 + width).append("\" y1=\"").append(y2).append("\" x2=\"").append(x2 + 10).append("\" y2=\"").append(y2).append("\"/>").append(RRDiagram.SVG_ELEMENTS_SEPARATOR);
+        svgContent.addLineConnector(x1 - 10, y1, x1 + 10, y1);
+        svgContent.addLineConnector(xOffset2 + width, y2, x2 + 10, y2);
+      } else {
+        svgContent.addPathConnector(
+            "M " + x1 + " " + (y2 - 5) +
+            " Q " + x1 + " " + y2 + " " + (x1 + 5) + " " + y2 +
+            " H " + xOffset2
+        );
+        svgContent.addPathConnector(
+            "M " + x2 + " " + (y2 - 5) +
+            " Q " + x2 + " " + y2 + " " + (x2 - 5) + " " + y2 +
+            " H " + (xOffset2 + width)
+        );
       }
-      rrElement.toSVG(rrDiagramToSVG, xOffset2, yOffset2, sb, svgUsage);
+      rrElement.toSVG(rrDiagramToSVG, xOffset2, yOffset2, svgContent);
       yOffset2 += height + 5;
     }
+    svgContent.addPathConnector(
+        "M " + (x1 - 5) + " " + y1 +
+        " Q " + x1 + " " + y1 + " " + x1 + " " + (y1 + 5) +
+        " V " + (y2 - 5)
+    );
+    svgContent.addPathConnector(
+        "M " + (x2 + 5) + " " + y1 +
+        " Q " + x2 + " " + y1 + " " + x2 + " " + (y1 + 5) +
+        " V " + (y2 - 5)
+    );
   }
 
 }
