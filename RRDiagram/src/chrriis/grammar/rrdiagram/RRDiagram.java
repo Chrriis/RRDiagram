@@ -118,7 +118,7 @@ public class RRDiagram {
     }
     // Then generate the rest (CSS and SVG container tags) based on that usage.
     StringBuilder sb = new StringBuilder();
-    sb.append("<svg xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns=\"http://www.w3.org/2000/svg\" width=\"").append(width).append("\" height=\"").append(height).append("\"><defs>");
+    sb.append("<svg version=\"1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns=\"http://www.w3.org/2000/svg\" width=\"").append(width).append("\" height=\"").append(height).append("\"><defs>");
     String cssElementSeparator = SVG_ELEMENTS_SEPARATOR.length() == 0? " ": SVG_ELEMENTS_SEPARATOR;
     sb.append("<style type=\"text/css\">").append(SVG_ELEMENTS_SEPARATOR);
     String connectorColor = Utils.convertColorToHtml(rrDiagramToSVG.getConnectorColor());
