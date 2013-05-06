@@ -24,6 +24,16 @@ public class RRDiagram {
     this.rrElement = rrElement;
   }
 
+  static final String SVG_ELEMENTS_SEPARATOR = "";//"\n";
+  static final String CSS_CONNECTOR_CLASS = "c";
+  static final String CSS_RULE_CLASS = "r";
+  static final String CSS_LITERAL_CLASS = "l";
+  static final String CSS_SPECIAL_SEQUENCE_CLASS = "s";
+  static final String CSS_LOOP_TEXT_CLASS = "lo";
+  static final String CSS_RULE_TEXT_CLASS = "rt";
+  static final String CSS_LITERAL_TEXT_CLASS = "lt";
+  static final String CSS_SPECIAL_SEQUENCE_TEXT_CLASS = "st";
+
   String toSVG(RRDiagramToSVG rrDiagramToSVG) {
     List<RRElement> rrElementList = new ArrayList<RRElement>();
     if(rrElement instanceof RRSequence) {
@@ -73,28 +83,28 @@ public class RRDiagram {
     String loopTextColor = Utils.convertColorToHtml(rrDiagramToSVG.getLoopTextColor());
     StringBuilder sb = new StringBuilder();
     sb.append("<svg xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns=\"http://www.w3.org/2000/svg\" width=\"").append(width).append("\" height=\"").append(height).append("\"><defs>");
-    sb.append("<style type=\"text/css\">\n");
-    sb.append(".connector {fill: none; stroke: ").append(connectorColor).append(";}\n");
-    sb.append(".rule {fill: ").append(ruleFillColor).append("; stroke: ").append(ruleBorderColor).append(";}\n");
-    sb.append(".literal {fill: ").append(literalFillColor).append("; stroke: ").append(literalBorderColor).append(";}\n");
-    sb.append(".special {fill: ").append(specialSequenceFillColor).append("; stroke: ").append(specialSequenceBorderColor).append(";}\n");
-    sb.append(".loop_text {fill: ").append(loopTextColor).append("; ").append(Utils.convertFontToCss(loopFont)).append("}\n");
-    sb.append(".rule_text {fill: ").append(ruleTextColor).append("; ").append(Utils.convertFontToCss(ruleFont)).append("}\n");
-    sb.append(".literal_text {fill: ").append(literalTextColor).append("; ").append(Utils.convertFontToCss(literalFont)).append("}\n");
-    sb.append(".special_text {fill: ").append(specialSequenceTextColor).append("; ").append(Utils.convertFontToCss(specialSequenceFont)).append(";}\n");
+    sb.append("<style type=\"text/css\">").append(SVG_ELEMENTS_SEPARATOR);
+    sb.append(".").append(CSS_CONNECTOR_CLASS).append(" {fill: none; stroke: ").append(connectorColor).append(";}").append(SVG_ELEMENTS_SEPARATOR);
+    sb.append(".").append(CSS_RULE_CLASS).append(" {fill: ").append(ruleFillColor).append("; stroke: ").append(ruleBorderColor).append(";}").append(SVG_ELEMENTS_SEPARATOR);
+    sb.append(".").append(CSS_LITERAL_CLASS).append(" {fill: ").append(literalFillColor).append("; stroke: ").append(literalBorderColor).append(";}").append(SVG_ELEMENTS_SEPARATOR);
+    sb.append(".").append(CSS_SPECIAL_SEQUENCE_CLASS).append(" {fill: ").append(specialSequenceFillColor).append("; stroke: ").append(specialSequenceBorderColor).append(";}").append(SVG_ELEMENTS_SEPARATOR);
+    sb.append(".").append(CSS_LOOP_TEXT_CLASS).append(" {fill: ").append(loopTextColor).append("; ").append(Utils.convertFontToCss(loopFont)).append("}").append(SVG_ELEMENTS_SEPARATOR);
+    sb.append(".").append(CSS_RULE_TEXT_CLASS).append(" {fill: ").append(ruleTextColor).append("; ").append(Utils.convertFontToCss(ruleFont)).append("}").append(SVG_ELEMENTS_SEPARATOR);
+    sb.append(".").append(CSS_LITERAL_TEXT_CLASS).append(" {fill: ").append(literalTextColor).append("; ").append(Utils.convertFontToCss(literalFont)).append("}").append(SVG_ELEMENTS_SEPARATOR);
+    sb.append(".").append(CSS_SPECIAL_SEQUENCE_TEXT_CLASS).append(" {fill: ").append(specialSequenceTextColor).append("; ").append(Utils.convertFontToCss(specialSequenceFont)).append(";}").append(SVG_ELEMENTS_SEPARATOR);
     sb.append("</style>");
-    sb.append("</defs>\n");
+    sb.append("</defs>").append(SVG_ELEMENTS_SEPARATOR);
     int xOffset = 0;
     int yOffset = 5;
-//    sb.append("<rect fill=\"#FFFFFF\" stroke=\"#FF0000\" x1=\"0\" y1=\"0\" width=\"").append(width).append("\" height=\"").append(height).append("\"/>\n");
+//    sb.append("<rect fill=\"#FFFFFF\" stroke=\"#FF0000\" x1=\"0\" y1=\"0\" width=\"").append(width).append("\" height=\"").append(height).append("\"/>").append(SVG_ELEMENTS_SEPARATOR);
     for(RRElement rrElement: rrElementList) {
       LayoutInfo layoutInfo2 = rrElement.getLayoutInfo();
       int connectorOffset2 = layoutInfo2.getConnectorOffset();
       int width2 = layoutInfo2.getWidth();
       int height2 = layoutInfo2.getHeight();
       int y1 = yOffset + connectorOffset2;
-      sb.append("<line class=\"connector\" x1=\"").append(xOffset).append("\" y1=\"").append(y1).append("\" x2=\"").append(xOffset + 5).append("\" y2=\"").append(y1).append("\"/>\n");
-      sb.append("<line class=\"connector\" x1=\"").append(xOffset + 5 + width2).append("\" y1=\"").append(y1).append("\" x2=\"").append(xOffset + 5 + width2 + 5).append("\" y2=\"").append(y1).append("\"/>\n");
+      sb.append("<line class=\"").append(CSS_CONNECTOR_CLASS).append("\" x1=\"").append(xOffset).append("\" y1=\"").append(y1).append("\" x2=\"").append(xOffset + 5).append("\" y2=\"").append(y1).append("\"/>").append(SVG_ELEMENTS_SEPARATOR);
+      sb.append("<line class=\"").append(CSS_CONNECTOR_CLASS).append("\" x1=\"").append(xOffset + 5 + width2).append("\" y1=\"").append(y1).append("\" x2=\"").append(xOffset + 5 + width2 + 5).append("\" y2=\"").append(y1).append("\"/>").append(SVG_ELEMENTS_SEPARATOR);
       // TODO: add decorations (like arrows)?
       rrElement.toSVG(rrDiagramToSVG, xOffset + 5, yOffset, sb);
       yOffset += height2 + 10;

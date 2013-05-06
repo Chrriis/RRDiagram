@@ -88,29 +88,33 @@ public class RRText extends RRElement {
     int width = layoutInfo.getWidth();
     int height = layoutInfo.getHeight();
     if(link != null) {
-      sb.append("<a xlink:href=\"").append(Utils.escapeXML(link))/*.append("\" xlink:title=\"").append(Utils.escapeXML(text))*/.append("\">");
+      sb.append("<a xlink:href=\"").append(Utils.escapeXML(link))/*.append("\" xlink:title=\"").append(Utils.escapeXML(text))*/.append("\">").append(RRDiagram.SVG_ELEMENTS_SEPARATOR);
     }
     Insets insets;
     Font font;
     String cssClass;
+    String cssTextClass;
     BoxShape shape;
     switch(type) {
       case RULE:
         insets = rrDiagramToSVG.getRuleInsets();
         font = rrDiagramToSVG.getRuleFont();
-        cssClass = "rule";
+        cssClass = RRDiagram.CSS_RULE_CLASS;
+        cssTextClass = RRDiagram.CSS_RULE_TEXT_CLASS;
         shape = rrDiagramToSVG.getRuleShape();
         break;
       case LITERAL:
         insets = rrDiagramToSVG.getLiteralInsets();
         font = rrDiagramToSVG.getLiteralFont();
-        cssClass = "literal";
+        cssClass = RRDiagram.CSS_LITERAL_CLASS;
+        cssTextClass = RRDiagram.CSS_LITERAL_TEXT_CLASS;
         shape = rrDiagramToSVG.getLiteralShape();
         break;
       case SPECIAL_SEQUENCE:
         insets = rrDiagramToSVG.getSpecialSequenceInsets();
         font = rrDiagramToSVG.getSpecialSequenceFont();
-        cssClass = "special";
+        cssClass = RRDiagram.CSS_SPECIAL_SEQUENCE_CLASS;
+        cssTextClass = RRDiagram.CSS_SPECIAL_SEQUENCE_TEXT_CLASS;
         shape = rrDiagramToSVG.getSpecialSequenceShape();
         break;
       default:
@@ -118,31 +122,30 @@ public class RRText extends RRElement {
     }
     switch(shape) {
       case RECTANGLE:
-        sb.append("<rect class=\"").append(cssClass).append("\" x=\"").append(xOffset).append("\" y=\"").append(yOffset).append("\" width=\"").append(width).append("\" height=\"").append(height).append("\"/>\n");
+        sb.append("<rect class=\"").append(cssClass).append("\" x=\"").append(xOffset).append("\" y=\"").append(yOffset).append("\" width=\"").append(width).append("\" height=\"").append(height).append("\"/>").append(RRDiagram.SVG_ELEMENTS_SEPARATOR);
         break;
       case ROUNDED_RECTANGLE:
         // Connector may be in rounded area if there are huge margins at top, but this is an unrealistic case so we don't add lines to complete the connector.
         int rx = (insets.left + insets.right + insets.top + insets.bottom) / 4;
-        sb.append("<rect class=\"").append(cssClass).append("\" x=\"").append(xOffset).append("\" y=\"").append(yOffset).append("\" width=\"").append(width).append("\" height=\"").append(height).append("\" rx=\"").append(rx).append("\"/>\n");
+        sb.append("<rect class=\"").append(cssClass).append("\" x=\"").append(xOffset).append("\" y=\"").append(yOffset).append("\" width=\"").append(width).append("\" height=\"").append(height).append("\" rx=\"").append(rx).append("\"/>").append(RRDiagram.SVG_ELEMENTS_SEPARATOR);
         break;
       case HEXAGON:
         // We don't calculate the exact length of the connector: it goes behind the shape.
         // We should calculate if we want to support transparent shapes.
         int connectorOffset = layoutInfo.getConnectorOffset();
-        sb.append("<line class=\"connector\" x1=\"").append(xOffset).append("\" y1=\"").append(yOffset + connectorOffset).append("\" x2=\"").append(xOffset + insets.left).append("\" y2=\"").append(yOffset + connectorOffset).append("\"/>");
-        sb.append("<line class=\"connector\" x1=\"").append(xOffset + width).append("\" y1=\"").append(yOffset + connectorOffset).append("\" x2=\"").append(xOffset + width - insets.right).append("\" y2=\"").append(yOffset + connectorOffset).append("\"/>");
-        sb.append("<polygon class=\"").append(cssClass).append("\" points=\"").append(xOffset).append(" ").append(yOffset + height / 2).append(" ").append(xOffset + insets.left).append(" ").append(yOffset).append(" ").append(xOffset + width - insets.right).append(" ").append(yOffset).append(" ").append(xOffset + width).append(" ").append(yOffset + height / 2).append(" ").append(xOffset + width - insets.right).append(" ").append(yOffset + height).append(" ").append(xOffset + insets.left).append(" ").append(yOffset + height).append("\"/>\n");
+        sb.append("<line class=\"").append(RRDiagram.CSS_CONNECTOR_CLASS).append("\" x1=\"").append(xOffset).append("\" y1=\"").append(yOffset + connectorOffset).append("\" x2=\"").append(xOffset + insets.left).append("\" y2=\"").append(yOffset + connectorOffset).append("\"/>").append(RRDiagram.SVG_ELEMENTS_SEPARATOR);
+        sb.append("<line class=\"").append(RRDiagram.CSS_CONNECTOR_CLASS).append("\" x1=\"").append(xOffset + width).append("\" y1=\"").append(yOffset + connectorOffset).append("\" x2=\"").append(xOffset + width - insets.right).append("\" y2=\"").append(yOffset + connectorOffset).append("\"/>").append(RRDiagram.SVG_ELEMENTS_SEPARATOR);
+        sb.append("<polygon class=\"").append(cssClass).append("\" points=\"").append(xOffset).append(" ").append(yOffset + height / 2).append(" ").append(xOffset + insets.left).append(" ").append(yOffset).append(" ").append(xOffset + width - insets.right).append(" ").append(yOffset).append(" ").append(xOffset + width).append(" ").append(yOffset + height / 2).append(" ").append(xOffset + width - insets.right).append(" ").append(yOffset + height).append(" ").append(xOffset + insets.left).append(" ").append(yOffset + height).append("\"/>").append(RRDiagram.SVG_ELEMENTS_SEPARATOR);
         break;
     }
     FontRenderContext fontRenderContext = new FontRenderContext(null, true, false);
     Rectangle2D stringBounds = font.getStringBounds(text, fontRenderContext);
     int textXOffset = xOffset + insets.left;
     int textYOffset = yOffset + insets.top + (int)Math.round(stringBounds.getHeight()) - fontYOffset;
-    sb.append("<text class=\"").append(cssClass).append("_text\" x=\"").append(textXOffset).append("\" y=\"").append(textYOffset).append("\">").append(Utils.escapeXML(text)).append("</text>");
+    sb.append("<text class=\"").append(cssTextClass).append("\" x=\"").append(textXOffset).append("\" y=\"").append(textYOffset).append("\">").append(Utils.escapeXML(text)).append("</text>").append(RRDiagram.SVG_ELEMENTS_SEPARATOR);
     if(link != null) {
-      sb.append("</a>");
+      sb.append("</a>").append(RRDiagram.SVG_ELEMENTS_SEPARATOR);
     }
-    sb.append("\n");
   }
 
 }

@@ -105,8 +105,8 @@ public class RRLoop extends RRElement {
     int x1 = xOffset + 10;
     int x2 = xOffset + 20 + maxWidth + 10 + cardinalitiesWidth;
     int y2 = yOffset + connectorOffset;
-    sb.append("<line class=\"connector\" x1=\"").append(x1 - 10).append("\" y1=\"").append(y2).append("\" x2=\"").append(x1 + 10 + (maxWidth - width1) / 2).append("\" y2=\"").append(y2).append("\"/>\n");
-    sb.append("<path class=\"connector\" d=\"");
+    sb.append("<line class=\"").append(RRDiagram.CSS_CONNECTOR_CLASS).append("\" x1=\"").append(x1 - 10).append("\" y1=\"").append(y2).append("\" x2=\"").append(x1 + 10 + (maxWidth - width1) / 2).append("\" y2=\"").append(y2).append("\"/>").append(RRDiagram.SVG_ELEMENTS_SEPARATOR);
+    sb.append("<path class=\"").append(RRDiagram.CSS_CONNECTOR_CLASS).append("\" d=\"");
     sb.append("M ").append(x1 + 5).append(" ").append(y2);
     sb.append(" Q ").append(x1).append(" ").append(y2).append(" ").append(x1).append(" ").append(y2 - 5);
     sb.append(" V ").append(y1 + 5);
@@ -121,15 +121,15 @@ public class RRLoop extends RRElement {
     sb.append(" Q ").append(x2).append(" ").append(y1).append(" ").append(x2).append(" ").append(y1 + 5);
     sb.append(" V ").append(y2 - 5);
     sb.append(" Q ").append(x2).append(" ").append(y2).append(" ").append(x2 - 5).append(" ").append(y2);
-    sb.append("\"/>\n");
-    sb.append("<line class=\"connector\" x1=\"").append(x2 - cardinalitiesWidth - 10 - (maxWidth - width1) / 2).append("\" y1=\"").append(y2).append("\" x2=\"").append(xOffset + layoutInfo.getWidth()).append("\" y2=\"").append(y2).append("\"/>\n");
+    sb.append("\"/>").append(RRDiagram.SVG_ELEMENTS_SEPARATOR);
+    sb.append("<line class=\"").append(RRDiagram.CSS_CONNECTOR_CLASS).append("\" x1=\"").append(x2 - cardinalitiesWidth - 10 - (maxWidth - width1) / 2).append("\" y1=\"").append(y2).append("\" x2=\"").append(xOffset + layoutInfo.getWidth()).append("\" y2=\"").append(y2).append("\"/>").append(RRDiagram.SVG_ELEMENTS_SEPARATOR);
     // Now that connectors are drawn, let's draw the elements.
     if(loopElement != null) {
       loopElement.toSVG(rrDiagramToSVG, loopOffset, yOffset, sb);
     }
     rrElement.toSVG(rrDiagramToSVG, xOffset + 20 + (maxWidth - width1) / 2, yOffset2, sb);
     if(cardinalitiesText != null) {
-      sb.append("<text class=\"loop_text\" x=\"").append(x2 - cardinalitiesWidth).append("\" y=\"").append(y2 - fontYOffset - 5).append("\">").append(cardinalitiesText).append("</text>");
+      sb.append("<text class=\"").append(RRDiagram.CSS_LOOP_TEXT_CLASS).append("\" x=\"").append(x2 - cardinalitiesWidth).append("\" y=\"").append(y2 - fontYOffset - 5).append("\">").append(cardinalitiesText).append("</text>").append(RRDiagram.SVG_ELEMENTS_SEPARATOR);
     }
   }
 

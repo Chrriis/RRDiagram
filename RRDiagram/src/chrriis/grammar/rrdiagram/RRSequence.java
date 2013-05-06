@@ -56,7 +56,7 @@ public class RRSequence extends RRElement {
       int width2 = layoutInfo2.getWidth();
       int xOffset2 = widthOffset + xOffset;
       if(i > 0) {
-        sb.append("<line class=\"connector\" x1=\"").append(xOffset2 - 10).append("\" y1=\"").append(yOffset + connectorOffset).append("\" x2=\"").append(xOffset2).append("\" y2=\"").append(yOffset + connectorOffset).append("\"/>\n");
+        sb.append("<line class=\"").append(RRDiagram.CSS_CONNECTOR_CLASS).append("\" x1=\"").append(xOffset2 - 10).append("\" y1=\"").append(yOffset + connectorOffset).append("\" x2=\"").append(xOffset2).append("\" y2=\"").append(yOffset + connectorOffset).append("\"/>").append(RRDiagram.SVG_ELEMENTS_SEPARATOR);
       }
       widthOffset += 10;
       widthOffset += width2;
