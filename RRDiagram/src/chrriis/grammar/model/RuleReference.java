@@ -5,13 +5,13 @@
  * See the file "readme.txt" for information on usage and redistribution of
  * this file, and for a DISCLAIMER OF ALL WARRANTIES.
  */
-package chrriis.rr.grammar;
+package chrriis.grammar.model;
 
-import chrriis.rr.diagram.RRBreak;
-import chrriis.rr.diagram.RRElement;
-import chrriis.rr.diagram.RRText;
-import chrriis.rr.diagram.RRText.Type;
-import chrriis.rr.grammar.GrammarToRRDiagram.RuleLinkProvider;
+import chrriis.grammar.model.GrammarToRRDiagram.RuleLinkProvider;
+import chrriis.grammar.rrdiagram.RRBreak;
+import chrriis.grammar.rrdiagram.RRElement;
+import chrriis.grammar.rrdiagram.RRText;
+import chrriis.grammar.rrdiagram.RRText.Type;
 
 /**
  * @author Christopher Deckers

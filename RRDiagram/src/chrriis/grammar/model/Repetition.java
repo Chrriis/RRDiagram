@@ -5,12 +5,12 @@
  * See the file "readme.txt" for information on usage and redistribution of
  * this file, and for a DISCLAIMER OF ALL WARRANTIES.
  */
-package chrriis.rr.grammar;
+package chrriis.grammar.model;
 
-import chrriis.rr.diagram.RRChoice;
-import chrriis.rr.diagram.RRElement;
-import chrriis.rr.diagram.RRLine;
-import chrriis.rr.diagram.RRLoop;
+import chrriis.grammar.rrdiagram.RRChoice;
+import chrriis.grammar.rrdiagram.RRElement;
+import chrriis.grammar.rrdiagram.RRLine;
+import chrriis.grammar.rrdiagram.RRLoop;
 
 /**
  * @author Christopher Deckers

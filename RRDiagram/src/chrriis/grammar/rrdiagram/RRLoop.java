@@ -5,7 +5,7 @@
  * See the file "readme.txt" for information on usage and redistribution of
  * this file, and for a DISCLAIMER OF ALL WARRANTIES.
  */
-package chrriis.rr.diagram;
+package chrriis.grammar.rrdiagram;
 
 import java.awt.Font;
 import java.awt.font.FontRenderContext;

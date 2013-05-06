@@ -5,14 +5,14 @@
  * See the file "readme.txt" for information on usage and redistribution of
  * this file, and for a DISCLAIMER OF ALL WARRANTIES.
  */
-package chrriis.rr.grammar;
+package chrriis.grammar.model;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import chrriis.rr.diagram.RRElement;
-import chrriis.rr.diagram.RRLoop;
-import chrriis.rr.diagram.RRSequence;
+import chrriis.grammar.rrdiagram.RRElement;
+import chrriis.grammar.rrdiagram.RRLoop;
+import chrriis.grammar.rrdiagram.RRSequence;
 
 /**
  * @author Christopher Deckers

@@ -5,13 +5,13 @@
  * See the file "readme.txt" for information on usage and redistribution of
  * this file, and for a DISCLAIMER OF ALL WARRANTIES.
  */
-package chrriis.rr.grammar;
+package chrriis.grammar.model;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import chrriis.rr.diagram.RRChoice;
-import chrriis.rr.diagram.RRElement;
+import chrriis.grammar.rrdiagram.RRChoice;
+import chrriis.grammar.rrdiagram.RRElement;
 
 /**
  * @author Christopher Deckers
