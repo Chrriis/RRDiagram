@@ -48,22 +48,33 @@ public class RRChoice extends RRElement {
     int y2 = 0;
     int xOffset2 = xOffset + 20;
     int yOffset2 = yOffset;
+    sb.append("<path class=\"").append(RRDiagram.CSS_CONNECTOR_CLASS).append("\" d=\"");
     // We want the connectors first, and then the elements, so that connectors do not show above elements.
     // This is why we perform the loop twice.
     for (int i = 0; i < rrElements.length; i++) {
       RRElement rrElement = rrElements[i];
       LayoutInfo layoutInfo2 = rrElement.getLayoutInfo();
+      int width = layoutInfo2.getWidth();
       int height = layoutInfo2.getHeight();
       y2 = yOffset2 + layoutInfo2.getConnectorOffset();
+      if(i > 0) {
+        // Left
+        sb.append(" M ").append(x1).append(" ").append(y2 - 5);
+        sb.append(" Q ").append(x1).append(" ").append(y2).append(" ").append(x1 + 5).append(" ").append(y2);
+        sb.append(" H ").append(xOffset2);
+        // Right
+        sb.append(" M ").append(x2).append(" ").append(y2 - 5);
+        sb.append(" Q ").append(x2).append(" ").append(y2).append(" ").append(x2 - 5).append(" ").append(y2);
+        sb.append(" H ").append(xOffset2 + width);
+      }
       yOffset2 += height + 5;
     }
-    sb.append("<path class=\"").append(RRDiagram.CSS_CONNECTOR_CLASS).append("\" d=\"");
-    sb.append("M ").append(x1 - 5).append(" ").append(y1);
+    // Left
+    sb.append(" M ").append(x1 - 5).append(" ").append(y1);
     sb.append(" Q ").append(x1).append(" ").append(y1).append(" ").append(x1).append(" ").append(y1 + 5);
     sb.append(" V ").append(y2 - 5);
-    sb.append("\"/>").append(RRDiagram.SVG_ELEMENTS_SEPARATOR);
-    sb.append("<path class=\"").append(RRDiagram.CSS_CONNECTOR_CLASS).append("\" d=\"");
-    sb.append("M ").append(x2 + 5).append(" ").append(y1);
+    // Right
+    sb.append(" M ").append(x2 + 5).append(" ").append(y1);
     sb.append(" Q ").append(x2).append(" ").append(y1).append(" ").append(x2).append(" ").append(y1 + 5);
     sb.append(" V ").append(y2 - 5);
     sb.append("\"/>").append(RRDiagram.SVG_ELEMENTS_SEPARATOR);
@@ -78,17 +89,6 @@ public class RRChoice extends RRElement {
       if(i == 0) {
         sb.append("<line class=\"").append(RRDiagram.CSS_CONNECTOR_CLASS).append("\" x1=\"").append(x1 - 10).append("\" y1=\"").append(y1).append("\" x2=\"").append(x1 + 10).append("\" y2=\"").append(y1).append("\"/>").append(RRDiagram.SVG_ELEMENTS_SEPARATOR);
         sb.append("<line class=\"").append(RRDiagram.CSS_CONNECTOR_CLASS).append("\" x1=\"").append(xOffset2 + width).append("\" y1=\"").append(y2).append("\" x2=\"").append(x2 + 10).append("\" y2=\"").append(y2).append("\"/>").append(RRDiagram.SVG_ELEMENTS_SEPARATOR);
-      } else {
-        sb.append("<path class=\"").append(RRDiagram.CSS_CONNECTOR_CLASS).append("\" d=\"");
-        sb.append("M ").append(x1).append(" ").append(y2 - 5);
-        sb.append(" Q ").append(x1).append(" ").append(y2).append(" ").append(x1 + 5).append(" ").append(y2);
-        sb.append(" H ").append(xOffset2);
-        sb.append("\"/>").append(RRDiagram.SVG_ELEMENTS_SEPARATOR);
-        sb.append("<path class=\"").append(RRDiagram.CSS_CONNECTOR_CLASS).append("\" d=\"");
-        sb.append("M ").append(x2).append(" ").append(y2 - 5);
-        sb.append(" Q ").append(x2).append(" ").append(y2).append(" ").append(x2 - 5).append(" ").append(y2);
-        sb.append(" H ").append(xOffset2 + width);
-        sb.append("\"/>").append(RRDiagram.SVG_ELEMENTS_SEPARATOR);
       }
       rrElement.toSVG(rrDiagramToSVG, xOffset2, yOffset2, sb);
       yOffset2 += height + 5;
