@@ -12,6 +12,32 @@ package chrriis.grammar.rrdiagram;
  */
 public abstract class RRElement {
 
+  protected static class LayoutInfo {
+
+    private int width;
+    private int height;
+    private int connectorOffset;
+
+    public LayoutInfo(int width, int height, int connectorOffset) {
+      this.width = width;
+      this.height = height;
+      this.connectorOffset = connectorOffset;
+    }
+
+    public int getWidth() {
+      return width;
+    }
+
+    public int getHeight() {
+      return height;
+    }
+
+    public int getConnectorOffset() {
+      return connectorOffset;
+    }
+
+  }
+
   private LayoutInfo layoutInfo;
 
   public void setLayoutInfo(LayoutInfo layoutInfo) {

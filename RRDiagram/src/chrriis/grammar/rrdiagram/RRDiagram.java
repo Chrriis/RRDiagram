@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import chrriis.common.Utils;
+import chrriis.grammar.rrdiagram.RRElement.LayoutInfo;
 
 /**
  * @author Christopher Deckers
