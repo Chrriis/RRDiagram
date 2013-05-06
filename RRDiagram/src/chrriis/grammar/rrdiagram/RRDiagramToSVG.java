@@ -20,7 +20,7 @@ public class RRDiagramToSVG {
     return rrDiagram.toSVG(this);
   }
 
-  public Color connectorColor = new Color(34, 34, 34);
+  private Color connectorColor = new Color(34, 34, 34);
 
   public void setConnectorColor(Color connectorColor) {
     this.connectorColor = connectorColor;
@@ -96,7 +96,7 @@ public class RRDiagramToSVG {
     return ruleShape;
   }
 
-  public Color ruleBorderColor = connectorColor;
+  private Color ruleBorderColor = connectorColor;
 
   public void setRuleBorderColor(Color ruleBorderColor) {
     this.ruleBorderColor = ruleBorderColor;
@@ -106,7 +106,7 @@ public class RRDiagramToSVG {
     return ruleBorderColor;
   }
 
-  public Color ruleFillColor = new Color(211, 240, 255);
+  private Color ruleFillColor = new Color(211, 240, 255);
 
   public void setRuleFillColor(Color ruleFillColor) {
     this.ruleFillColor = ruleFillColor;
@@ -156,7 +156,7 @@ public class RRDiagramToSVG {
     return literalShape;
   }
 
-  public Color literalBorderColor = connectorColor;
+  private Color literalBorderColor = connectorColor;
 
   public void setLiteralBorderColor(Color literalBorderColor) {
     this.literalBorderColor = literalBorderColor;
@@ -166,7 +166,7 @@ public class RRDiagramToSVG {
     return literalBorderColor;
   }
 
-  public Color literalFillColor = new Color(144, 217, 255);
+  private Color literalFillColor = new Color(144, 217, 255);
 
   public void setLiteralFillColor(Color literalFillColor) {
     this.literalFillColor = literalFillColor;
@@ -216,7 +216,7 @@ public class RRDiagramToSVG {
     return specialSequenceShape;
   }
 
-  public Color specialSequenceBorderColor = connectorColor;
+  private Color specialSequenceBorderColor = connectorColor;
 
   public void setSpecialSequenceBorderColor(Color specialSequenceBorderColor) {
     this.specialSequenceBorderColor = specialSequenceBorderColor;
@@ -226,7 +226,7 @@ public class RRDiagramToSVG {
     return specialSequenceBorderColor;
   }
 
-  public Color specialSequenceFillColor = new Color(228, 244, 255);
+  private Color specialSequenceFillColor = new Color(228, 244, 255);
 
   public void setSpecialSequenceFillColor(Color specialSequenceFillColor) {
     this.specialSequenceFillColor = specialSequenceFillColor;
