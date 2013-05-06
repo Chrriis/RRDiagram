@@ -11,6 +11,8 @@ import java.awt.Font;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 
+import chrriis.grammar.rrdiagram.RRDiagram.SvgUsage;
+
 /**
  * @author Christopher Deckers
  */
@@ -80,7 +82,7 @@ public class RRLoop extends RRElement {
   }
 
   @Override
-  protected void toSVG(RRDiagramToSVG rrDiagramToSVG, int xOffset, int yOffset, StringBuilder sb) {
+  protected void toSVG(RRDiagramToSVG rrDiagramToSVG, int xOffset, int yOffset, StringBuilder sb, SvgUsage svgUsage) {
     LayoutInfo layoutInfo1 = rrElement.getLayoutInfo();
     int width1 = layoutInfo1.getWidth();
     int maxWidth = width1;
@@ -125,11 +127,12 @@ public class RRLoop extends RRElement {
     sb.append("<line class=\"").append(RRDiagram.CSS_CONNECTOR_CLASS).append("\" x1=\"").append(x2 - cardinalitiesWidth - 10 - (maxWidth - width1) / 2).append("\" y1=\"").append(y2).append("\" x2=\"").append(xOffset + layoutInfo.getWidth()).append("\" y2=\"").append(y2).append("\"/>").append(RRDiagram.SVG_ELEMENTS_SEPARATOR);
     // Now that connectors are drawn, let's draw the elements.
     if(loopElement != null) {
-      loopElement.toSVG(rrDiagramToSVG, loopOffset, yOffset, sb);
+      loopElement.toSVG(rrDiagramToSVG, loopOffset, yOffset, sb, svgUsage);
     }
-    rrElement.toSVG(rrDiagramToSVG, xOffset + 20 + (maxWidth - width1) / 2, yOffset2, sb);
+    rrElement.toSVG(rrDiagramToSVG, xOffset + 20 + (maxWidth - width1) / 2, yOffset2, sb, svgUsage);
     if(cardinalitiesText != null) {
-      sb.append("<text class=\"").append(RRDiagram.CSS_LOOP_TEXT_CLASS).append("\" x=\"").append(x2 - cardinalitiesWidth).append("\" y=\"").append(y2 - fontYOffset - 5).append("\">").append(cardinalitiesText).append("</text>").append(RRDiagram.SVG_ELEMENTS_SEPARATOR);
+      svgUsage.setLoopCardinalitiesUsed(true);
+      sb.append("<text class=\"").append(RRDiagram.CSS_LOOP_CARDINALITIES_TEXT_CLASS).append("\" x=\"").append(x2 - cardinalitiesWidth).append("\" y=\"").append(y2 - fontYOffset - 5).append("\">").append(cardinalitiesText).append("</text>").append(RRDiagram.SVG_ELEMENTS_SEPARATOR);
     }
   }
 

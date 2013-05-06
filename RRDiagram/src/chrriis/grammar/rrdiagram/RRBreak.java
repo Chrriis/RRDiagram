@@ -7,6 +7,8 @@
  */
 package chrriis.grammar.rrdiagram;
 
+import chrriis.grammar.rrdiagram.RRDiagram.SvgUsage;
+
 /**
  * @author Christopher Deckers
  */
@@ -18,7 +20,7 @@ public class RRBreak extends RRElement {
   }
 
   @Override
-  protected void toSVG(RRDiagramToSVG rrDiagramToSVG, int xOffset, int yOffset, StringBuilder sb) {
+  protected void toSVG(RRDiagramToSVG rrDiagramToSVG, int xOffset, int yOffset, StringBuilder sb, SvgUsage svgUsage) {
     throw new IllegalStateException("This element must not be nested and should have been processed before entering generation.");
   }
 

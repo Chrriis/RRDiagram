@@ -7,6 +7,8 @@
  */
 package chrriis.grammar.rrdiagram;
 
+import chrriis.grammar.rrdiagram.RRDiagram.SvgUsage;
+
 /**
  * @author Christopher Deckers
  */
@@ -40,7 +42,7 @@ public class RRChoice extends RRElement {
   }
 
   @Override
-  protected void toSVG(RRDiagramToSVG rrDiagramToSVG, int xOffset, int yOffset, StringBuilder sb) {
+  protected void toSVG(RRDiagramToSVG rrDiagramToSVG, int xOffset, int yOffset, StringBuilder sb, SvgUsage svgUsage) {
     LayoutInfo layoutInfo = getLayoutInfo();
     int y1 = yOffset + layoutInfo.getConnectorOffset();
     int x1 = xOffset + 10;
@@ -90,7 +92,7 @@ public class RRChoice extends RRElement {
         sb.append("<line class=\"").append(RRDiagram.CSS_CONNECTOR_CLASS).append("\" x1=\"").append(x1 - 10).append("\" y1=\"").append(y1).append("\" x2=\"").append(x1 + 10).append("\" y2=\"").append(y1).append("\"/>").append(RRDiagram.SVG_ELEMENTS_SEPARATOR);
         sb.append("<line class=\"").append(RRDiagram.CSS_CONNECTOR_CLASS).append("\" x1=\"").append(xOffset2 + width).append("\" y1=\"").append(y2).append("\" x2=\"").append(x2 + 10).append("\" y2=\"").append(y2).append("\"/>").append(RRDiagram.SVG_ELEMENTS_SEPARATOR);
       }
-      rrElement.toSVG(rrDiagramToSVG, xOffset2, yOffset2, sb);
+      rrElement.toSVG(rrDiagramToSVG, xOffset2, yOffset2, sb, svgUsage);
       yOffset2 += height + 5;
     }
   }

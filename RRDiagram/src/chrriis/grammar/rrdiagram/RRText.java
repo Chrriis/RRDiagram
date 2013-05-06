@@ -14,6 +14,7 @@ import java.awt.font.LineMetrics;
 import java.awt.geom.Rectangle2D;
 
 import chrriis.common.Utils;
+import chrriis.grammar.rrdiagram.RRDiagram.SvgUsage;
 import chrriis.grammar.rrdiagram.RRDiagramToSVG.BoxShape;
 
 /**
@@ -83,7 +84,7 @@ public class RRText extends RRElement {
   }
 
   @Override
-  protected void toSVG(RRDiagramToSVG rrDiagramToSVG, int xOffset, int yOffset, StringBuilder sb) {
+  protected void toSVG(RRDiagramToSVG rrDiagramToSVG, int xOffset, int yOffset, StringBuilder sb, SvgUsage svgUsage) {
     LayoutInfo layoutInfo = getLayoutInfo();
     int width = layoutInfo.getWidth();
     int height = layoutInfo.getHeight();
@@ -102,6 +103,7 @@ public class RRText extends RRElement {
         cssClass = RRDiagram.CSS_RULE_CLASS;
         cssTextClass = RRDiagram.CSS_RULE_TEXT_CLASS;
         shape = rrDiagramToSVG.getRuleShape();
+        svgUsage.setRuleUsed(true);
         break;
       case LITERAL:
         insets = rrDiagramToSVG.getLiteralInsets();
@@ -109,6 +111,7 @@ public class RRText extends RRElement {
         cssClass = RRDiagram.CSS_LITERAL_CLASS;
         cssTextClass = RRDiagram.CSS_LITERAL_TEXT_CLASS;
         shape = rrDiagramToSVG.getLiteralShape();
+        svgUsage.setLiteralUsed(true);
         break;
       case SPECIAL_SEQUENCE:
         insets = rrDiagramToSVG.getSpecialSequenceInsets();
@@ -116,6 +119,7 @@ public class RRText extends RRElement {
         cssClass = RRDiagram.CSS_SPECIAL_SEQUENCE_CLASS;
         cssTextClass = RRDiagram.CSS_SPECIAL_SEQUENCE_TEXT_CLASS;
         shape = rrDiagramToSVG.getSpecialSequenceShape();
+        svgUsage.setSpecialSequenceUsed(true);
         break;
       default:
         throw new IllegalStateException("Unknown type: " + type);

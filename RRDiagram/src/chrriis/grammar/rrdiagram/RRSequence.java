@@ -7,6 +7,8 @@
  */
 package chrriis.grammar.rrdiagram;
 
+import chrriis.grammar.rrdiagram.RRDiagram.SvgUsage;
+
 /**
  * @author Christopher Deckers
  */
@@ -44,7 +46,7 @@ public class RRSequence extends RRElement {
   }
 
   @Override
-  protected void toSVG(RRDiagramToSVG rrDiagramToSVG, int xOffset, int yOffset, StringBuilder sb) {
+  protected void toSVG(RRDiagramToSVG rrDiagramToSVG, int xOffset, int yOffset, StringBuilder sb, SvgUsage svgUsage) {
     LayoutInfo layoutInfo = getLayoutInfo();
     int connectorOffset = layoutInfo.getConnectorOffset();
     int widthOffset = 0;
@@ -69,7 +71,7 @@ public class RRSequence extends RRElement {
       int connectorOffset2 = layoutInfo2.getConnectorOffset();
       int xOffset2 = widthOffset + xOffset;
       int yOffset2 = yOffset + connectorOffset - connectorOffset2;
-      rrElement.toSVG(rrDiagramToSVG, xOffset2, yOffset2, sb);
+      rrElement.toSVG(rrDiagramToSVG, xOffset2, yOffset2, sb, svgUsage);
       widthOffset += 10;
       widthOffset += width2;
     }

@@ -7,6 +7,8 @@
  */
 package chrriis.grammar.rrdiagram;
 
+import chrriis.grammar.rrdiagram.RRDiagram.SvgUsage;
+
 /**
  * @author Christopher Deckers
  */
@@ -50,6 +52,6 @@ public abstract class RRElement {
 
   protected abstract void computeLayoutInfo(RRDiagramToSVG rrDiagramToSVG);
 
-  protected abstract void toSVG(RRDiagramToSVG rrDiagramToSVG, int xOffset, int yOffset, StringBuilder sb);
+  protected abstract void toSVG(RRDiagramToSVG rrDiagramToSVG, int xOffset, int yOffset, StringBuilder sb, SvgUsage svgUsage);
 
 }
