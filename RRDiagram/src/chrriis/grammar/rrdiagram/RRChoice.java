@@ -48,12 +48,32 @@ public class RRChoice extends RRElement {
     int y2 = 0;
     int xOffset2 = xOffset + 20;
     int yOffset2 = yOffset;
+    // We want the connectors first, and then the elements, so that connectors do not show above elements.
+    // This is why we perform the loop twice.
+    for (int i = 0; i < rrElements.length; i++) {
+      RRElement rrElement = rrElements[i];
+      LayoutInfo layoutInfo2 = rrElement.getLayoutInfo();
+      int height = layoutInfo2.getHeight();
+      y2 = yOffset2 + layoutInfo2.getConnectorOffset();
+      yOffset2 += height + 5;
+    }
+    sb.append("<path class=\"connector\" d=\"");
+    sb.append("M ").append(x1 - 5).append(" ").append(y1);
+    sb.append(" Q ").append(x1).append(" ").append(y1).append(" ").append(x1).append(" ").append(y1 + 5);
+    sb.append(" V ").append(y2 - 5);
+    sb.append("\"/>\n");
+    sb.append("<path class=\"connector\" d=\"");
+    sb.append("M ").append(x2 + 5).append(" ").append(y1);
+    sb.append(" Q ").append(x2).append(" ").append(y1).append(" ").append(x2).append(" ").append(y1 + 5);
+    sb.append(" V ").append(y2 - 5);
+    sb.append("\"/>\n");
+    y2 = 0;
+    yOffset2 = yOffset;
     for (int i = 0; i < rrElements.length; i++) {
       RRElement rrElement = rrElements[i];
       LayoutInfo layoutInfo2 = rrElement.getLayoutInfo();
       int width = layoutInfo2.getWidth();
       int height = layoutInfo2.getHeight();
-      rrElement.toSVG(rrDiagramToSVG, xOffset2, yOffset2, sb);
       y2 = yOffset2 + layoutInfo2.getConnectorOffset();
       if(i == 0) {
         sb.append("<line class=\"connector\" x1=\"").append(x1 - 10).append("\" y1=\"").append(y1).append("\" x2=\"").append(x1 + 10).append("\" y2=\"").append(y1).append("\"/>\n");
@@ -70,18 +90,9 @@ public class RRChoice extends RRElement {
         sb.append(" H ").append(xOffset2 + width);
         sb.append("\"/>\n");
       }
+      rrElement.toSVG(rrDiagramToSVG, xOffset2, yOffset2, sb);
       yOffset2 += height + 5;
     }
-    sb.append("<path class=\"connector\" d=\"");
-    sb.append("M ").append(x1 - 5).append(" ").append(y1);
-    sb.append(" Q ").append(x1).append(" ").append(y1).append(" ").append(x1).append(" ").append(y1 + 5);
-    sb.append(" V ").append(y2 - 5);
-    sb.append("\"/>\n");
-    sb.append("<path class=\"connector\" d=\"");
-    sb.append("M ").append(x2 + 5).append(" ").append(y1);
-    sb.append(" Q ").append(x2).append(" ").append(y1).append(" ").append(x2).append(" ").append(y1 + 5);
-    sb.append(" V ").append(y2 - 5);
-    sb.append("\"/>\n");
   }
 
 }

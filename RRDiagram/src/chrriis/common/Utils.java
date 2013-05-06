@@ -7,6 +7,9 @@
  */
 package chrriis.common;
 
+import java.awt.Color;
+import java.awt.Font;
+
 
 /**
  * @author Christopher Deckers
@@ -43,6 +46,37 @@ public class Utils {
         break;
       }
     }
+    return sb.toString();
+  }
+
+  public static String convertColorToHtml(Color c) {
+    StringBuilder connectorColorSB = new StringBuilder("#");
+    if (c.getRed() < 16) {
+      connectorColorSB.append('0');
+    }
+    connectorColorSB.append(Integer.toHexString(c.getRed()));
+    if (c.getGreen() < 16) {
+      connectorColorSB.append('0');
+    }
+    connectorColorSB.append(Integer.toHexString(c.getGreen()));
+    if (c.getBlue() < 16) {
+      connectorColorSB.append('0');
+    }
+    connectorColorSB.append(Integer.toHexString(c.getBlue()));
+    String connectorColor = connectorColorSB.toString();
+    return connectorColor;
+  }
+
+  public static String convertFontToCss(Font font) {
+    StringBuilder sb = new StringBuilder();
+    sb.append("font-family: ").append(font.getFamily()).append(", Sans-serif;");
+    if(font.isItalic()) {
+      sb.append(" font-style: italic;");
+    }
+    if(font.isBold()) {
+      sb.append(" font-weight: bold;");
+    }
+    sb.append(" font-size: " + font.getSize() + "px;");
     return sb.toString();
   }
 

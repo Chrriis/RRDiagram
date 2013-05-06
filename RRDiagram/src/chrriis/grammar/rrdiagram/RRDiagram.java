@@ -7,8 +7,11 @@
  */
 package chrriis.grammar.rrdiagram;
 
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
+
+import chrriis.common.Utils;
 
 /**
  * @author Christopher Deckers
@@ -53,14 +56,32 @@ public class RRDiagram {
       width = Math.max(width, 5 + layoutInfo.getWidth() + 5);
       height += layoutInfo.getHeight() + 5;
     }
+    String connectorColor = Utils.convertColorToHtml(rrDiagramToSVG.getConnectorColor());
+    String ruleBorderColor = Utils.convertColorToHtml(rrDiagramToSVG.getRuleBorderColor());
+    String ruleFillColor = Utils.convertColorToHtml(rrDiagramToSVG.getRuleFillColor());
+    Font ruleFont = rrDiagramToSVG.getRuleFont();
+    String ruleTextColor = Utils.convertColorToHtml(rrDiagramToSVG.getRuleTextColor());
+    String literalBorderColor = Utils.convertColorToHtml(rrDiagramToSVG.getLiteralBorderColor());
+    String literalFillColor = Utils.convertColorToHtml(rrDiagramToSVG.getLiteralFillColor());
+    Font literalFont = rrDiagramToSVG.getLiteralFont();
+    String literalTextColor = Utils.convertColorToHtml(rrDiagramToSVG.getLiteralTextColor());
+    String specialSequenceBorderColor = Utils.convertColorToHtml(rrDiagramToSVG.getSpecialSequenceBorderColor());
+    String specialSequenceFillColor = Utils.convertColorToHtml(rrDiagramToSVG.getSpecialSequenceFillColor());
+    Font specialSequenceFont = rrDiagramToSVG.getSpecialSequenceFont();
+    String specialSequenceTextColor = Utils.convertColorToHtml(rrDiagramToSVG.getSpecialSequenceTextColor());
+    Font loopFont = rrDiagramToSVG.getLoopFont();
+    String loopTextColor = Utils.convertColorToHtml(rrDiagramToSVG.getLoopTextColor());
     StringBuilder sb = new StringBuilder();
     sb.append("<svg xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns=\"http://www.w3.org/2000/svg\" width=\"").append(width).append("\" height=\"").append(height).append("\"><defs>");
     sb.append("<style type=\"text/css\">\n");
-    sb.append(".connector {fill: none; stroke: #222222;}\n");
-    sb.append(".rule {fill: #D3F0FF; stroke: #222222;}\n");
-    sb.append(".literal {fill: #90D9FF; stroke: #222222;}\n");
-    sb.append(".special {fill: #E4F4FF; stroke: #222222;}\n");
-    sb.append(".desc {font-family: Verdana, Sans-serif; font-size: 12px;}\n");
+    sb.append(".connector {fill: none; stroke: ").append(connectorColor).append(";}\n");
+    sb.append(".rule {fill: ").append(ruleFillColor).append("; stroke: ").append(ruleBorderColor).append(";}\n");
+    sb.append(".literal {fill: ").append(literalFillColor).append("; stroke: ").append(literalBorderColor).append(";}\n");
+    sb.append(".special {fill: ").append(specialSequenceFillColor).append("; stroke: ").append(specialSequenceBorderColor).append(";}\n");
+    sb.append(".loop_text {fill: ").append(loopTextColor).append("; ").append(Utils.convertFontToCss(loopFont)).append("}\n");
+    sb.append(".rule_text {fill: ").append(ruleTextColor).append("; ").append(Utils.convertFontToCss(ruleFont)).append("}\n");
+    sb.append(".literal_text {fill: ").append(literalTextColor).append("; ").append(Utils.convertFontToCss(literalFont)).append("}\n");
+    sb.append(".special_text {fill: ").append(specialSequenceTextColor).append("; ").append(Utils.convertFontToCss(specialSequenceFont)).append(";}\n");
     sb.append("</style>");
     sb.append("</defs>\n");
     int xOffset = 0;

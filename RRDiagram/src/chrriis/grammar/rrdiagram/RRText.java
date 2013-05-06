@@ -8,10 +8,13 @@
 package chrriis.grammar.rrdiagram;
 
 import java.awt.Font;
+import java.awt.Insets;
 import java.awt.font.FontRenderContext;
+import java.awt.font.LineMetrics;
 import java.awt.geom.Rectangle2D;
 
 import chrriis.common.Utils;
+import chrriis.grammar.rrdiagram.RRDiagramToSVG.BoxShape;
 
 /**
  * @author Christopher Deckers
@@ -51,14 +54,31 @@ public class RRText extends RRElement {
   @Override
   protected void computeLayoutInfo(RRDiagramToSVG rrDiagramToSVG) {
     FontRenderContext fontRenderContext = new FontRenderContext(null, true, false);
-    Font font = new Font("Verdana", Font.PLAIN, 12);
-    fontYOffset = Math.round(font.getLineMetrics(text, fontRenderContext).getDescent());
+    Font font;
+    Insets insets;
+    switch(type) {
+      case RULE:
+        insets = rrDiagramToSVG.getRuleInsets();
+        font = rrDiagramToSVG.getRuleFont();
+        break;
+      case LITERAL:
+        insets = rrDiagramToSVG.getLiteralInsets();
+        font = rrDiagramToSVG.getLiteralFont();
+        break;
+      case SPECIAL_SEQUENCE:
+        insets = rrDiagramToSVG.getSpecialSequenceInsets();
+        font = rrDiagramToSVG.getSpecialSequenceFont();
+        break;
+      default: throw new IllegalStateException("Unknown type: " + type);
+    }
+    LineMetrics lineMetrics = font.getLineMetrics(text, fontRenderContext);
+    fontYOffset = Math.round(lineMetrics.getDescent());
     Rectangle2D stringBounds = font.getStringBounds(text, fontRenderContext);
     int width = (int)Math.round(stringBounds.getWidth());
     int height = (int)Math.round(stringBounds.getHeight());
-    int connectorOffset = 5 + height - fontYOffset;
-    width += 10 + 10;
-    height += 5 + 5;
+    int connectorOffset = insets.top + height - fontYOffset;
+    width += insets.left + insets.right;
+    height += insets.top + insets.bottom;
     setLayoutInfo(new LayoutInfo(width, height, connectorOffset));
   }
 
@@ -70,26 +90,55 @@ public class RRText extends RRElement {
     if(link != null) {
       sb.append("<a xlink:href=\"").append(Utils.escapeXML(link))/*.append("\" xlink:title=\"").append(Utils.escapeXML(text))*/.append("\">");
     }
+    Insets insets;
+    Font font;
+    String cssClass;
+    BoxShape shape;
     switch(type) {
       case RULE:
-        sb.append("<rect class=\"rule\" x=\"").append(xOffset).append("\" y=\"").append(yOffset).append("\" width=\"").append(width).append("\" height=\"").append(height).append("\"/>\n");
+        insets = rrDiagramToSVG.getRuleInsets();
+        font = rrDiagramToSVG.getRuleFont();
+        cssClass = "rule";
+        shape = rrDiagramToSVG.getRuleShape();
         break;
       case LITERAL:
-        sb.append("<rect class=\"literal\" x=\"").append(xOffset).append("\" y=\"").append(yOffset).append("\" width=\"").append(width).append("\" height=\"").append(height).append("\" rx=\"10\"/>\n");
+        insets = rrDiagramToSVG.getLiteralInsets();
+        font = rrDiagramToSVG.getLiteralFont();
+        cssClass = "literal";
+        shape = rrDiagramToSVG.getLiteralShape();
         break;
       case SPECIAL_SEQUENCE:
-        sb.append("<polygon class=\"special\" points=\"").append(xOffset).append(" ").append(yOffset + height / 2).append(" ").append(xOffset + 10).append(" ").append(yOffset).append(" ").append(xOffset + width - 10).append(" ").append(yOffset).append(" ").append(xOffset + width).append(" ").append(yOffset + height / 2).append(" ").append(xOffset + width - 10).append(" ").append(yOffset + height).append(" ").append(xOffset + 10).append(" ").append(yOffset + height).append("\"/>\n");
+        insets = rrDiagramToSVG.getSpecialSequenceInsets();
+        font = rrDiagramToSVG.getSpecialSequenceFont();
+        cssClass = "special";
+        shape = rrDiagramToSVG.getSpecialSequenceShape();
+        break;
+      default:
+        throw new IllegalStateException("Unknown type: " + type);
+    }
+    switch(shape) {
+      case RECTANGLE:
+        sb.append("<rect class=\"").append(cssClass).append("\" x=\"").append(xOffset).append("\" y=\"").append(yOffset).append("\" width=\"").append(width).append("\" height=\"").append(height).append("\"/>\n");
+        break;
+      case ROUNDED_RECTANGLE:
+        // Connector may be in rounded area if there are huge margins at top, but this is an unrealistic case so we don't add lines to complete the connector.
+        int rx = (insets.left + insets.right + insets.top + insets.bottom) / 4;
+        sb.append("<rect class=\"").append(cssClass).append("\" x=\"").append(xOffset).append("\" y=\"").append(yOffset).append("\" width=\"").append(width).append("\" height=\"").append(height).append("\" rx=\"").append(rx).append("\"/>\n");
+        break;
+      case HEXAGON:
+        // We don't calculate the exact length of the connector: it goes behind the shape.
+        // We should calculate if we want to support transparent shapes.
         int connectorOffset = layoutInfo.getConnectorOffset();
-        int connectorDelta = (connectorOffset - height / 2) * 10 / (height / 2);
-        sb.append("<line class=\"connector\" x1=\"").append(xOffset).append("\" y1=\"").append(yOffset + connectorOffset).append("\" x2=\"").append(xOffset + connectorDelta).append("\" y2=\"").append(yOffset + connectorOffset).append("\"/>");
-        sb.append("<line class=\"connector\" x1=\"").append(xOffset + width).append("\" y1=\"").append(yOffset + connectorOffset).append("\" x2=\"").append(xOffset + width - connectorDelta).append("\" y2=\"").append(yOffset + connectorOffset).append("\"/>");
+        sb.append("<line class=\"connector\" x1=\"").append(xOffset).append("\" y1=\"").append(yOffset + connectorOffset).append("\" x2=\"").append(xOffset + insets.left).append("\" y2=\"").append(yOffset + connectorOffset).append("\"/>");
+        sb.append("<line class=\"connector\" x1=\"").append(xOffset + width).append("\" y1=\"").append(yOffset + connectorOffset).append("\" x2=\"").append(xOffset + width - insets.right).append("\" y2=\"").append(yOffset + connectorOffset).append("\"/>");
+        sb.append("<polygon class=\"").append(cssClass).append("\" points=\"").append(xOffset).append(" ").append(yOffset + height / 2).append(" ").append(xOffset + insets.left).append(" ").append(yOffset).append(" ").append(xOffset + width - insets.right).append(" ").append(yOffset).append(" ").append(xOffset + width).append(" ").append(yOffset + height / 2).append(" ").append(xOffset + width - insets.right).append(" ").append(yOffset + height).append(" ").append(xOffset + insets.left).append(" ").append(yOffset + height).append("\"/>\n");
         break;
     }
     FontRenderContext fontRenderContext = new FontRenderContext(null, true, false);
-    Rectangle2D stringBounds = new Font("Verdana", Font.PLAIN, 12).getStringBounds(text, fontRenderContext);
-    int textXOffset = xOffset + 10;
-    int textYOffset = yOffset + 5 + (int)Math.round(stringBounds.getHeight()) - fontYOffset;
-    sb.append("<text class=\"desc\" x=\"").append(textXOffset).append("\" y=\"").append(textYOffset).append("\">").append(Utils.escapeXML(text)).append("</text>");
+    Rectangle2D stringBounds = font.getStringBounds(text, fontRenderContext);
+    int textXOffset = xOffset + insets.left;
+    int textYOffset = yOffset + insets.top + (int)Math.round(stringBounds.getHeight()) - fontYOffset;
+    sb.append("<text class=\"").append(cssClass).append("_text\" x=\"").append(textXOffset).append("\" y=\"").append(textYOffset).append("\">").append(Utils.escapeXML(text)).append("</text>");
     if(link != null) {
       sb.append("</a>");
     }

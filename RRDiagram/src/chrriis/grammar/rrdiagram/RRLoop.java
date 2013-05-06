@@ -53,7 +53,7 @@ public class RRLoop extends RRElement {
     if(minRepetitionCount > 0 || maxRepetitionCount != null) {
       cardinalitiesText = minRepetitionCount + ".." + (maxRepetitionCount == null? "N": maxRepetitionCount);
       FontRenderContext fontRenderContext = new FontRenderContext(null, true, false);
-      Font font = new Font("Verdana", Font.PLAIN, 12);
+      Font font = rrDiagramToSVG.getLoopFont();
       fontYOffset = Math.round(font.getLineMetrics(cardinalitiesText, fontRenderContext).getDescent());
       Rectangle2D stringBounds = font.getStringBounds(cardinalitiesText, fontRenderContext);
       cardinalitiesWidth = (int)Math.round(stringBounds.getWidth()) + 2;
@@ -90,19 +90,18 @@ public class RRLoop extends RRElement {
     int y1 = yOffset;
     int loopOffset = 0;
     int loopWidth = 0;
+    // Draw the connectors first to avoid connector overlapping element shape.
     if(loopElement != null) {
       LayoutInfo layoutInfo2 = loopElement.getLayoutInfo();
       loopWidth = layoutInfo2.getWidth();
       maxWidth = Math.max(maxWidth, loopWidth);
       loopOffset = xOffset + 20 + (maxWidth - loopWidth) / 2;
-      loopElement.toSVG(rrDiagramToSVG, loopOffset, yOffset, sb);
       yOffset2 += 5 + layoutInfo2.getHeight();
       y1 += layoutInfo2.getConnectorOffset();
     } else {
       yOffset2 += 15;
       y1 += 5;
     }
-    rrElement.toSVG(rrDiagramToSVG, xOffset + 20 + (maxWidth - width1) / 2, yOffset2, sb);
     int x1 = xOffset + 10;
     int x2 = xOffset + 20 + maxWidth + 10 + cardinalitiesWidth;
     int y2 = yOffset + connectorOffset;
@@ -124,8 +123,13 @@ public class RRLoop extends RRElement {
     sb.append(" Q ").append(x2).append(" ").append(y2).append(" ").append(x2 - 5).append(" ").append(y2);
     sb.append("\"/>\n");
     sb.append("<line class=\"connector\" x1=\"").append(x2 - cardinalitiesWidth - 10 - (maxWidth - width1) / 2).append("\" y1=\"").append(y2).append("\" x2=\"").append(xOffset + layoutInfo.getWidth()).append("\" y2=\"").append(y2).append("\"/>\n");
+    // Now that connectors are drawn, let's draw the elements.
+    if(loopElement != null) {
+      loopElement.toSVG(rrDiagramToSVG, loopOffset, yOffset, sb);
+    }
+    rrElement.toSVG(rrDiagramToSVG, xOffset + 20 + (maxWidth - width1) / 2, yOffset2, sb);
     if(cardinalitiesText != null) {
-      sb.append("<text class=\"desc\" x=\"").append(x2 - cardinalitiesWidth).append("\" y=\"").append(y2 - fontYOffset - 5).append("\">").append(cardinalitiesText).append("</text>");
+      sb.append("<text class=\"loop_text\" x=\"").append(x2 - cardinalitiesWidth).append("\" y=\"").append(y2 - fontYOffset - 5).append("\">").append(cardinalitiesText).append("</text>");
     }
   }
 
