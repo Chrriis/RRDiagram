@@ -11,6 +11,8 @@ import java.awt.Font;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 
+import chrriis.common.Utils;
+
 /**
  * @author Christopher Deckers
  */
@@ -66,7 +68,7 @@ public class RRText extends RRElement {
     int width = layoutInfo.getWidth();
     int height = layoutInfo.getHeight();
     if(link != null) {
-      sb.append("<a xlink:href=\"").append(link)/*.append("\" xlink:title=\"").append(text)*/.append("\">");
+      sb.append("<a xlink:href=\"").append(Utils.escapeXML(link))/*.append("\" xlink:title=\"").append(Utils.escapeXML(text))*/.append("\">");
     }
     switch(type) {
       case RULE:
@@ -87,7 +89,7 @@ public class RRText extends RRElement {
     Rectangle2D stringBounds = new Font("Verdana", Font.PLAIN, 12).getStringBounds(text, fontRenderContext);
     int textXOffset = xOffset + 10;
     int textYOffset = yOffset + 5 + (int)Math.round(stringBounds.getHeight()) - fontYOffset;
-    sb.append("<text class=\"desc\" x=\"").append(textXOffset).append("\" y=\"").append(textYOffset).append("\">").append(text).append("</text>");
+    sb.append("<text class=\"desc\" x=\"").append(textXOffset).append("\" y=\"").append(textYOffset).append("\">").append(Utils.escapeXML(text)).append("</text>");
     if(link != null) {
       sb.append("</a>");
     }
