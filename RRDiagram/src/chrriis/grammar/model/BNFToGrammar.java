@@ -94,8 +94,6 @@ public class BNFToGrammar {
                   }
                   chunkList.remove(i);
                   chunkList.set(i - 1, newChunk);
-
-
                 } else {
                   Chunk newChunk = new Chunk(ChunkType.REPETITION);
                   newChunk.setMinCount(multiplier);
