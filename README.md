@@ -92,6 +92,10 @@ The supported BNF subset when reading is the following:
     ( ... )
 - literal
     " ... " or ' ... '
+- special characters
+    (? ... ?)
+- comments
+    (* ... *)
 </pre>
 
 When getting the BNF syntax from the grammar model, it is possible to tweak the kind of BNF to get by changing some options on the converter.
