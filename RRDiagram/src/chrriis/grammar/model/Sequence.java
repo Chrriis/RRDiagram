@@ -58,6 +58,10 @@ public class Sequence extends Expression {
 
   @Override
   protected void toBNF(GrammarToBNF grammarToBNF, StringBuilder sb, boolean isNested) {
+    if(expressions.length == 0) {
+      sb.append("( )");
+      return;
+    }
     if(isNested && expressions.length > 1) {
       sb.append("( ");
     }
