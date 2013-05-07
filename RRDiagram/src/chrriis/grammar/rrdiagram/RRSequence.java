@@ -50,20 +50,6 @@ public class RRSequence extends RRElement {
     LayoutInfo layoutInfo = getLayoutInfo();
     int connectorOffset = layoutInfo.getConnectorOffset();
     int widthOffset = 0;
-    // We want the connectors first, and then the elements, so that connectors do not show above elements.
-    // This is why we perform the loop twice.
-    for (int i = 0; i < rrElements.length; i++) {
-      RRElement rrElement = rrElements[i];
-      LayoutInfo layoutInfo2 = rrElement.getLayoutInfo();
-      int width2 = layoutInfo2.getWidth();
-      int xOffset2 = widthOffset + xOffset;
-      if(i > 0) {
-        svgContent.addLineConnector(xOffset2 - 10, yOffset + connectorOffset, xOffset2, yOffset + connectorOffset);
-      }
-      widthOffset += 10;
-      widthOffset += width2;
-    }
-    widthOffset = 0;
     for (int i = 0; i < rrElements.length; i++) {
       RRElement rrElement = rrElements[i];
       LayoutInfo layoutInfo2 = rrElement.getLayoutInfo();
@@ -71,6 +57,9 @@ public class RRSequence extends RRElement {
       int connectorOffset2 = layoutInfo2.getConnectorOffset();
       int xOffset2 = widthOffset + xOffset;
       int yOffset2 = yOffset + connectorOffset - connectorOffset2;
+      if(i > 0) {
+        svgContent.addLineConnector(xOffset2 - 10, yOffset + connectorOffset, xOffset2, yOffset + connectorOffset);
+      }
       rrElement.toSVG(rrDiagramToSVG, xOffset2, yOffset2, svgContent);
       widthOffset += 10;
       widthOffset += width2;

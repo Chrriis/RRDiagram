@@ -93,7 +93,6 @@ public class RRLoop extends RRElement {
     int y1 = yOffset;
     int loopOffset = 0;
     int loopWidth = 0;
-    // Draw the connectors first to avoid connector overlapping element shape.
     if(loopElement != null) {
       LayoutInfo layoutInfo2 = loopElement.getLayoutInfo();
       loopWidth = layoutInfo2.getWidth();
@@ -109,31 +108,30 @@ public class RRLoop extends RRElement {
     int x2 = xOffset + 20 + maxWidth + 10 + cardinalitiesWidth;
     int y2 = yOffset + connectorOffset;
     svgContent.addLineConnector(x1 - 10, y2, x1 + 10 + (maxWidth - width1) / 2, y2);
-    StringBuilder pathSB = new StringBuilder();
-    pathSB.append("M ").append(x1 + 5).append(" ").append(y2);
-    pathSB.append(" Q ").append(x1).append(" ").append(y2).append(" ").append(x1).append(" ").append(y2 - 5);
-    pathSB.append(" V ").append(y1 + 5);
-    pathSB.append(" Q ").append(x1).append(" ").append(y1).append(" ").append(x1 + 5).append(" ").append(y1);
+    int loopPathStartX = x1 + 5;
+    svgContent.addPathConnector(x1 + 5, y2, "q-5 0-5-5", x1, y2 - 5);
+    svgContent.addLineConnector(x1, y2 - 5, x1, y1 + 5);
+    svgContent.addPathConnector(x1, y1 + 5, "q0-5 5-5", x1 + 5, y1);
     if(loopElement != null) {
-      pathSB.append(" H ").append(loopOffset);
-      pathSB.append(" M ").append(loopOffset + loopWidth).append(" ").append(y1);
-      pathSB.append(" H ").append(x2 - 5);
-    } else {
-      pathSB.append(" H ").append(x2 - 5);
-    }
-    pathSB.append(" Q ").append(x2).append(" ").append(y1).append(" ").append(x2).append(" ").append(y1 + 5);
-    pathSB.append(" V ").append(y2 - 5);
-    pathSB.append(" Q ").append(x2).append(" ").append(y2).append(" ").append(x2 - 5).append(" ").append(y2);
-    svgContent.addPathConnector(pathSB.toString());
-    svgContent.addLineConnector(x2 - cardinalitiesWidth - 10 - (maxWidth - width1) / 2, y2, xOffset + layoutInfo.getWidth(), y2);
-    if(loopElement != null) {
+      svgContent.addLineConnector(x1 + 5, y1, loopOffset, y1);
       loopElement.toSVG(rrDiagramToSVG, loopOffset, yOffset, svgContent);
+      loopPathStartX = loopOffset + loopWidth;
+    }
+    svgContent.addLineConnector(loopPathStartX, y1, x2 - 5, y1);
+    svgContent.addPathConnector(x2 - 5, y1, "q5 0 5 5", x2, y1 + 5);
+    svgContent.addLineConnector(x2, y1 + 5, x2, y2 - 5);
+    svgContent.addPathConnector(x2, y2 - 5, "q0 5-5 5", x2 - 5, y2);
+    if(cardinalitiesText != null) {
+      String cssClass = RRDiagram.CSS_LOOP_CARDINALITIES_TEXT_CLASS;
+      if(!svgContent.isStyleDefined(cssClass)) {
+        Font loopFont = rrDiagramToSVG.getLoopFont();
+        String loopTextColor = Utils.convertColorToHtml(rrDiagramToSVG.getLoopTextColor());
+        cssClass = svgContent.setCSSClass(cssClass, "fill:" + loopTextColor + ";" + Utils.convertFontToCss(loopFont));
+      }
+      svgContent.addElement("<text class=\"" + cssClass + "\" x=\"" + (x2 - cardinalitiesWidth) + "\" y=\"" + (y2 - fontYOffset - 5) + "\">" + Utils.escapeXML(cardinalitiesText) + "</text>");
     }
     rrElement.toSVG(rrDiagramToSVG, xOffset + 20 + (maxWidth - width1) / 2, yOffset2, svgContent);
-    if(cardinalitiesText != null) {
-      svgContent.setLoopCardinalitiesUsed(true);
-      svgContent.addElement("<text class=\"" + RRDiagram.CSS_LOOP_CARDINALITIES_TEXT_CLASS + "\" x=\"" + (x2 - cardinalitiesWidth) + "\" y=\"" + (y2 - fontYOffset - 5) + "\">" + Utils.escapeXML(cardinalitiesText) + "</text>");
-    }
+    svgContent.addLineConnector(x2 - cardinalitiesWidth - 10 - (maxWidth - width1) / 2, y2, xOffset + layoutInfo.getWidth(), y2);
   }
 
 }

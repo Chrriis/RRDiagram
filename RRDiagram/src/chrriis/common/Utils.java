@@ -69,14 +69,14 @@ public class Utils {
 
   public static String convertFontToCss(Font font) {
     StringBuilder sb = new StringBuilder();
-    sb.append("font-family: ").append(font.getFamily()).append(", Sans-serif;");
+    sb.append("font-family:").append(font.getFamily()).append(",Sans-serif;");
     if(font.isItalic()) {
-      sb.append(" font-style: italic;");
+      sb.append("font-style:italic;");
     }
     if(font.isBold()) {
-      sb.append(" font-weight: bold;");
+      sb.append("font-weight:bold;");
     }
-    sb.append(" font-size: " + font.getSize() + "px;");
+    sb.append("font-size:" + font.getSize() + "px;");
     return sb.toString();
   }
 

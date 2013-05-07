@@ -7,9 +7,11 @@
  */
 package chrriis.grammar.rrdiagram;
 
-import java.awt.Font;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import chrriis.common.Utils;
 import chrriis.grammar.rrdiagram.RRElement.LayoutInfo;
@@ -25,70 +27,271 @@ public class RRDiagram {
     this.rrElement = rrElement;
   }
 
-  static final String SVG_ELEMENTS_SEPARATOR = "";//"\n";
+  private static final String SVG_ELEMENTS_SEPARATOR = "";//\n";
   private static final String CSS_CONNECTOR_CLASS = "c";
   static final String CSS_RULE_CLASS = "r";
+  static final String CSS_RULE_TEXT_CLASS = "i";
   static final String CSS_LITERAL_CLASS = "l";
+  static final String CSS_LITERAL_TEXT_CLASS = "j";
   static final String CSS_SPECIAL_SEQUENCE_CLASS = "s";
-  static final String CSS_LOOP_CARDINALITIES_TEXT_CLASS = "lc";
-  static final String CSS_RULE_TEXT_CLASS = "rt";
-  static final String CSS_LITERAL_TEXT_CLASS = "lt";
-  static final String CSS_SPECIAL_SEQUENCE_TEXT_CLASS = "st";
+  static final String CSS_SPECIAL_SEQUENCE_TEXT_CLASS = "k";
+  static final String CSS_LOOP_CARDINALITIES_TEXT_CLASS = "u";
 
-  public static class SvgContent {
+  private static abstract class SvgConnector {
+  }
+
+  private static class SvgPath extends SvgConnector {
     private StringBuilder pathSB = new StringBuilder();
-    public void addPathConnector(String path) {
-      if(pathSB.length() > 0) {
-        pathSB.append(' ');
+    private int startX;
+    private int startY;
+    private int endX;
+    private int endY;
+    public SvgPath(int startX, int startY, String path, int endX, int endY) {
+      this.startX = startX;
+      this.startY = startY;
+      pathSB.append(path);
+      this.endX = endX;
+      this.endY = endY;
+    }
+    public void addPath(int x1, int y1, String path, int x2, int y2) {
+      if(x1 != this.endX || y1 != this.endY) {
+        if(x1 == this.endX && y1 == this.endY + 1) {
+          pathSB.append("v").append(y1 - y2);
+        } else if(y1 == this.endY && x1 == this.endX + 1) {
+          pathSB.append("h").append(x1 - x2);
+        } else {
+          pathSB.append("m").append(x1 - endX);
+          if(y1 - endY >= 0) {
+            pathSB.append(" ");
+          }
+          pathSB.append(y1 - endY);
+        }
       }
       pathSB.append(path);
+      this.endX = x2;
+      this.endY = y2;
     }
-    public void addLineConnector(int x1, int y1, int x2, int y2) {
+    public void addPath(SvgPath svgPath) {
+      addPath(svgPath.startX, svgPath.startY, svgPath.getPath(), svgPath.endX, svgPath.endY);
+    }
+    public void addLine(SvgLine svgLine) {
+      int x1 = svgLine.getX1();
+      int y1 = svgLine.getY1();
+      int x2 = svgLine.getX2();
+      int y2 = svgLine.getY2();
+      if(x1 == x2 && endX == x1) {
+        if(endY == y1 || endY == y1 - 1) {
+          pathSB.append("v").append(y2 - endY);
+          endY = y2;
+          return;
+        }
+        if(endY == y2 || endY == y2 + 1) {
+          pathSB.append("v").append(y1 - endY);
+          endY = y1;
+          return;
+        }
+      } else if(y1 == y2 && endY == y1) {
+        if(endX == x1 || endX == x1 - 1) {
+          pathSB.append("h").append(x2 - endX);
+          endX = x2;
+          return;
+        }
+        if(endX == x2 || endX == x2 + 1) {
+          pathSB.append("h").append(x1 - endX);
+          endX = x1;
+          return;
+        }
+      }
+      pathSB.append("m").append(x1 - endX);
+      if(y1 - endY >= 0) {
+        pathSB.append(" ");
+      }
+      pathSB.append(y1 - endY);
       if(x1 == x2) {
-        addPathConnector("M " + x1 + " " + y1 + " V " + y2);
+        pathSB.append("v").append(y2 - y1);
       } else if(y1 == y2) {
-        addPathConnector("M " + x1 + " " + y1 + " H " + x2);
+        pathSB.append("h").append(x2 - x1);
       } else {
-        addPathConnector("M " + x1 + " " + y1 + " L " + x2 + " " + y2);
+        pathSB.append("l").append(x2 - x1);
+        if(y2 - y1 >= 0) {
+          pathSB.append(" ");
+        }
+        pathSB.append(y2 - y1);
+      }
+      endX = x2;
+      endY = y2;
+    }
+    public String getPath() {
+      return pathSB.toString();
+    }
+  }
+
+  private static class SvgLine extends SvgConnector {
+    private int x1;
+    private int y1;
+    private int x2;
+    private int y2;
+    public SvgLine(int x1, int y1, int x2, int y2) {
+      this.x1 = x1;
+      this.y1 = y1;
+      this.x2 = x2;
+      this.y2 = y2;
+    }
+    public int getX1() {
+      return x1;
+    }
+    public int getY1() {
+      return y1;
+    }
+    public int getX2() {
+      return x2;
+    }
+    public int getY2() {
+      return y2;
+    }
+    public boolean mergeLine(int x1, int y1, int x2, int y2) {
+      if(x1 == x2 && this.x1 == this.x2 && x1 == this.x1) {
+        if(y2 >= this.y1 - 1 && y1 <= this.y2 + 1) {
+          this.y1 = Math.min(this.y1, y1);
+          this.y2 = Math.max(this.y2, y2);
+          return true;
+        }
+      } else if(y1 == y2 && this.y1 == this.y2 && y1 == this.y1) {
+        if(x2 >= this.x1 - 1 && x1 <= this.x2 + 1) {
+          this.x1 = Math.min(this.x1, x1);
+          this.x2 = Math.max(this.x2, x2);
+          return true;
+        }
+      }
+      return false;
+    }
+  }
+
+  public static class SvgContent {
+    private List<SvgConnector> connectorList = new ArrayList<SvgConnector>();
+    public void addPathConnector(int x1, int y1, String path, int x2, int y2) {
+      Object c = connectorList.isEmpty()? null: connectorList.get(connectorList.size() - 1);
+      if(c != null) {
+        if(c instanceof SvgPath) {
+          ((SvgPath)c).addPath(x1, y1, path, x2, y2);
+        } else {
+          SvgLine svgLine = (SvgLine)c;
+          int x1_ = svgLine.getX1();
+          int y1_ = svgLine.getY1();
+          int x2_ = svgLine.getX2();
+          int y2_ = svgLine.getY2();
+          if(x1_ == x2_ && x1 == x1_) {
+            if(y2_ == y1 - 1) {
+              svgLine.mergeLine(x1_, y1_, x2_, y2_ + 1);
+            } else if(y1_ == y1 + 1) {
+              svgLine.mergeLine(x1_, y1_ - 1, x2_, y2_);
+            }
+          } else if(y1_ == y2_ && y1 == y1_) {
+            if(x2_ == x1 - 1) {
+              svgLine.mergeLine(x1_, y1_, x2_ + 1, y2_);
+            } else if(x1_ == x1 + 1) {
+              svgLine.mergeLine(x1_ - 1, y1_, x2_, y2_);
+            }
+          }
+          connectorList.add(new SvgPath(x1, y1, path, x2, y2));
+        }
+      } else {
+        connectorList.add(new SvgPath(x1, y1, path, x2, y2));
       }
     }
-    private String getConnectorElement() {
-      return pathSB.length() == 0? "": "<path class=\"" + CSS_CONNECTOR_CLASS + "\" d=\""+ pathSB + "\"/>" + SVG_ELEMENTS_SEPARATOR;
+    public void addLineConnector(int x1, int y1, int x2, int y2) {
+      int x1_ = Math.min(x1, x2);
+      int y1_ = Math.min(y1, y2);
+      int x2_ = Math.max(x1, x2);
+      int y2_ = Math.max(y1, y2);
+      Object c = connectorList.isEmpty()? null: connectorList.get(connectorList.size() - 1);
+      if(c == null || !(c instanceof SvgLine) || !((SvgLine)c).mergeLine(x1_, y1_, x2_, y2_)) {
+        connectorList.add(new SvgLine(x1_, y1_, x2_, y2_));
+      }
     }
-    private StringBuilder elementSB = new StringBuilder();
+    private String getConnectorElement(RRDiagramToSVG rrDiagramToSVG) {
+      if(connectorList.isEmpty()) {
+        return "";
+      }
+      SvgPath path0 = null;
+      for(SvgConnector connector: connectorList) {
+        if(path0 == null) {
+          if(connector instanceof SvgPath) {
+            path0 = (SvgPath)connector;
+          } else {
+            SvgLine svgLine = (SvgLine)connector;
+            int x1 = svgLine.getX1();
+            int y1 = svgLine.getY1();
+            path0 = new SvgPath(x1, y1, "M" + x1 + (y1 < 0? y1: " " + y1), x1, y1);
+            path0.addLine(svgLine);
+          }
+        } else {
+          if(connector instanceof SvgPath) {
+            path0.addPath((SvgPath)connector);
+          } else {
+            path0.addLine((SvgLine)connector);
+          }
+        }
+      }
+      String connectorColor = Utils.convertColorToHtml(rrDiagramToSVG.getConnectorColor());
+      String cssClass = setCSSClass(CSS_CONNECTOR_CLASS, "fill:none;stroke:" + connectorColor + ";");
+      return "<path class=\"" + cssClass + "\" d=\""+ path0.getPath() + "\"/>" + SVG_ELEMENTS_SEPARATOR;
+    }
+    private StringBuilder elementsSB = new StringBuilder();
     public void addElement(String element) {
-      elementSB.append(element).append(SVG_ELEMENTS_SEPARATOR);
+      elementsSB.append(element).append(SVG_ELEMENTS_SEPARATOR);
     }
-    private String getElement() {
-      return elementSB.toString();
+    private String getElements() {
+      return elementsSB.toString();
     }
-    private boolean isLoopCardinalitiesUsed;
-    public void setLoopCardinalitiesUsed(boolean isLoopCardinalitiesUsed) {
-      this.isLoopCardinalitiesUsed = isLoopCardinalitiesUsed;
+    private Map<String, String> cssClassToDefinitionMap = new HashMap<String, String>();
+    public boolean isStyleDefined(String style) {
+      return cssClassToDefinitionMap.containsKey(style);
     }
-    private boolean isLoopCardinalitiesUsed() {
-      return isLoopCardinalitiesUsed;
+    /**
+     * @return the name of a CSS class to use, which can be different from the cssClass parameter if they share the same definition.
+     */
+    public String setCSSClass(String cssClass, String definition) {
+      definition = definition.trim();
+      if(!definition.endsWith(";")) {
+        throw new IllegalArgumentException("The definition is not well formed, it does not end with a semi-colon!");
+      }
+      // The class name is either mapped to a definition ending with a semi-colon, or the name of another class that shares the same definition.
+      String pDefinition = cssClassToDefinitionMap.get(cssClass);
+      if(pDefinition != null) {
+        if(!pDefinition.endsWith(";")) {
+          pDefinition = cssClassToDefinitionMap.get(pDefinition);
+        }
+        if(!definition.equals(pDefinition)) {
+          throw new IllegalStateException("The CSS class \"" + cssClass + "\" is already defined, but with a different definition!");
+        }
+      } else {
+        for(Map.Entry<String, String> e: cssClassToDefinitionMap.entrySet()) {
+          if(e.getValue().equals(definition)) {
+            String redirectCssClass = e.getKey();
+            cssClassToDefinitionMap.put(cssClass, redirectCssClass);
+            return redirectCssClass;
+          }
+        }
+        cssClassToDefinitionMap.put(cssClass, definition);
+      }
+      return cssClass;
     }
-    private boolean isRuleUsed;
-    public void setRuleUsed(boolean isRuleUsed) {
-      this.isRuleUsed = isRuleUsed;
-    }
-    private boolean isRuleUsed() {
-      return isRuleUsed;
-    }
-    private boolean isLiteralUsed;
-    public void setLiteralUsed(boolean isLiteralUsed) {
-      this.isLiteralUsed = isLiteralUsed;
-    }
-    private boolean isLiteralUsed() {
-      return isLiteralUsed;
-    }
-    private boolean isSpecialSequenceUsed;
-    public void setSpecialSequenceUsed(boolean isSpecialSequenceUsed) {
-      this.isSpecialSequenceUsed = isSpecialSequenceUsed;
-    }
-    private boolean isSpecialSequenceUsed() {
-      return isSpecialSequenceUsed;
+    private String getCSSStyles() {
+      StringBuilder sb = new StringBuilder();
+      String[] cssClasses = cssClassToDefinitionMap.keySet().toArray(new String[0]);
+      Arrays.sort(cssClasses);
+      for(int i=0; i<cssClasses.length; i++) {
+        if(sb.length() > 0) {
+          sb.append(SVG_ELEMENTS_SEPARATOR);
+        }
+        String cssClass = cssClasses[i];
+        String definition = cssClassToDefinitionMap.get(cssClass);
+        if(definition.endsWith(";")) {
+          sb.append(".").append(cssClass).append("{").append(definition).append("}");
+        }
+      }
+      return sb.toString();
     }
   }
 
@@ -128,7 +331,6 @@ public class RRDiagram {
     // First, generate the XML for the elements, to know the usage.
     int xOffset = 0;
     int yOffset = 5;
-//    sb.append("<rect fill=\"#FFFFFF\" stroke=\"#FF0000\" x1=\"0\" y1=\"0\" width=\"").append(width).append("\" height=\"").append(height).append("\"/>").append(SVG_ELEMENTS_SEPARATOR);
     for(RRElement rrElement: rrElementList) {
       LayoutInfo layoutInfo2 = rrElement.getLayoutInfo();
       int connectorOffset2 = layoutInfo2.getConnectorOffset();
@@ -136,51 +338,24 @@ public class RRDiagram {
       int height2 = layoutInfo2.getHeight();
       int y1 = yOffset + connectorOffset2;
       svgContent.addLineConnector(xOffset, y1, xOffset + 5, y1);
-      svgContent.addLineConnector(xOffset + 5 + width2, y1, xOffset + 5 + width2 + 5, y1);
       // TODO: add decorations (like arrows)?
       rrElement.toSVG(rrDiagramToSVG, xOffset + 5, yOffset, svgContent);
+      svgContent.addLineConnector(xOffset + 5 + width2, y1, xOffset + 5 + width2 + 5, y1);
       yOffset += height2 + 10;
     }
+    String connectorElement = svgContent.getConnectorElement(rrDiagramToSVG);
+    String elements = svgContent.getElements();
     // Then generate the rest (CSS and SVG container tags) based on that usage.
     StringBuilder sb = new StringBuilder();
-    sb.append("<svg version=\"1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns=\"http://www.w3.org/2000/svg\" width=\"").append(width).append("\" height=\"").append(height).append("\"><defs>");
-    String cssElementSeparator = SVG_ELEMENTS_SEPARATOR.length() == 0? " ": SVG_ELEMENTS_SEPARATOR;
-    sb.append("<style type=\"text/css\">").append(SVG_ELEMENTS_SEPARATOR);
-    String connectorColor = Utils.convertColorToHtml(rrDiagramToSVG.getConnectorColor());
-    sb.append(".").append(CSS_CONNECTOR_CLASS).append(" {fill: none; stroke: ").append(connectorColor).append(";}").append(cssElementSeparator);
-    if(svgContent.isRuleUsed()) {
-      String ruleBorderColor = Utils.convertColorToHtml(rrDiagramToSVG.getRuleBorderColor());
-      String ruleFillColor = Utils.convertColorToHtml(rrDiagramToSVG.getRuleFillColor());
-      Font ruleFont = rrDiagramToSVG.getRuleFont();
-      String ruleTextColor = Utils.convertColorToHtml(rrDiagramToSVG.getRuleTextColor());
-      sb.append(".").append(CSS_RULE_CLASS).append(" {fill: ").append(ruleFillColor).append("; stroke: ").append(ruleBorderColor).append(";}").append(cssElementSeparator);
-      sb.append(".").append(CSS_RULE_TEXT_CLASS).append(" {fill: ").append(ruleTextColor).append("; ").append(Utils.convertFontToCss(ruleFont)).append("}").append(cssElementSeparator);
+    sb.append("<svg version=\"1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns=\"http://www.w3.org/2000/svg\" width=\"").append(width).append("\" height=\"").append(height).append("\">").append(SVG_ELEMENTS_SEPARATOR);
+    String styles = svgContent.getCSSStyles();
+    if(styles.length() > 0) {
+      sb.append("<defs><style type=\"text/css\">").append(SVG_ELEMENTS_SEPARATOR);
+      sb.append(styles).append(SVG_ELEMENTS_SEPARATOR);
+      sb.append("</style></defs>").append(SVG_ELEMENTS_SEPARATOR);
     }
-    if(svgContent.isLiteralUsed()) {
-      String literalBorderColor = Utils.convertColorToHtml(rrDiagramToSVG.getLiteralBorderColor());
-      String literalFillColor = Utils.convertColorToHtml(rrDiagramToSVG.getLiteralFillColor());
-      Font literalFont = rrDiagramToSVG.getLiteralFont();
-      String literalTextColor = Utils.convertColorToHtml(rrDiagramToSVG.getLiteralTextColor());
-      sb.append(".").append(CSS_LITERAL_CLASS).append(" {fill: ").append(literalFillColor).append("; stroke: ").append(literalBorderColor).append(";}").append(cssElementSeparator);
-      sb.append(".").append(CSS_LITERAL_TEXT_CLASS).append(" {fill: ").append(literalTextColor).append("; ").append(Utils.convertFontToCss(literalFont)).append("}").append(cssElementSeparator);
-    }
-    if(svgContent.isSpecialSequenceUsed()) {
-      String specialSequenceBorderColor = Utils.convertColorToHtml(rrDiagramToSVG.getSpecialSequenceBorderColor());
-      String specialSequenceFillColor = Utils.convertColorToHtml(rrDiagramToSVG.getSpecialSequenceFillColor());
-      Font specialSequenceFont = rrDiagramToSVG.getSpecialSequenceFont();
-      String specialSequenceTextColor = Utils.convertColorToHtml(rrDiagramToSVG.getSpecialSequenceTextColor());
-      sb.append(".").append(CSS_SPECIAL_SEQUENCE_CLASS).append(" {fill: ").append(specialSequenceFillColor).append("; stroke: ").append(specialSequenceBorderColor).append(";}").append(cssElementSeparator);
-      sb.append(".").append(CSS_SPECIAL_SEQUENCE_TEXT_CLASS).append(" {fill: ").append(specialSequenceTextColor).append("; ").append(Utils.convertFontToCss(specialSequenceFont)).append(";}").append(cssElementSeparator);
-    }
-    if(svgContent.isLoopCardinalitiesUsed()) {
-      Font loopFont = rrDiagramToSVG.getLoopFont();
-      String loopTextColor = Utils.convertColorToHtml(rrDiagramToSVG.getLoopTextColor());
-      sb.append(".").append(CSS_LOOP_CARDINALITIES_TEXT_CLASS).append(" {fill: ").append(loopTextColor).append("; ").append(Utils.convertFontToCss(loopFont)).append("}").append(cssElementSeparator);
-    }
-    sb.append("</style>");
-    sb.append("</defs>").append(SVG_ELEMENTS_SEPARATOR);
-    sb.append(svgContent.getConnectorElement());
-    sb.append(svgContent.getElement());
+    sb.append(connectorElement);
+    sb.append(elements);
     sb.append("</svg>");
     return sb.toString();
   }

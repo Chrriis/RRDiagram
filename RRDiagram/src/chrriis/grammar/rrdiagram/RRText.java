@@ -102,24 +102,45 @@ public class RRText extends RRElement {
         font = rrDiagramToSVG.getRuleFont();
         cssClass = RRDiagram.CSS_RULE_CLASS;
         cssTextClass = RRDiagram.CSS_RULE_TEXT_CLASS;
+        if(!svgContent.isStyleDefined(cssClass)) {
+          String ruleBorderColor = Utils.convertColorToHtml(rrDiagramToSVG.getRuleBorderColor());
+          String ruleFillColor = Utils.convertColorToHtml(rrDiagramToSVG.getRuleFillColor());
+          Font ruleFont = rrDiagramToSVG.getRuleFont();
+          String ruleTextColor = Utils.convertColorToHtml(rrDiagramToSVG.getRuleTextColor());
+          cssClass = svgContent.setCSSClass(cssClass, "fill:" + ruleFillColor + ";stroke:" + ruleBorderColor + ";");
+          cssTextClass = svgContent.setCSSClass(cssTextClass, "fill:" + ruleTextColor + ";" + Utils.convertFontToCss(ruleFont));
+        }
         shape = rrDiagramToSVG.getRuleShape();
-        svgContent.setRuleUsed(true);
         break;
       case LITERAL:
         insets = rrDiagramToSVG.getLiteralInsets();
         font = rrDiagramToSVG.getLiteralFont();
         cssClass = RRDiagram.CSS_LITERAL_CLASS;
         cssTextClass = RRDiagram.CSS_LITERAL_TEXT_CLASS;
+        if(!svgContent.isStyleDefined(cssClass)) {
+          String literalBorderColor = Utils.convertColorToHtml(rrDiagramToSVG.getLiteralBorderColor());
+          String literalFillColor = Utils.convertColorToHtml(rrDiagramToSVG.getLiteralFillColor());
+          Font literalFont = rrDiagramToSVG.getLiteralFont();
+          String literalTextColor = Utils.convertColorToHtml(rrDiagramToSVG.getLiteralTextColor());
+          cssClass = svgContent.setCSSClass(cssClass, "fill:" + literalFillColor + ";stroke:" + literalBorderColor + ";");
+          cssTextClass = svgContent.setCSSClass(cssTextClass, "fill:" + literalTextColor + ";" + Utils.convertFontToCss(literalFont));
+        }
         shape = rrDiagramToSVG.getLiteralShape();
-        svgContent.setLiteralUsed(true);
         break;
       case SPECIAL_SEQUENCE:
         insets = rrDiagramToSVG.getSpecialSequenceInsets();
         font = rrDiagramToSVG.getSpecialSequenceFont();
         cssClass = RRDiagram.CSS_SPECIAL_SEQUENCE_CLASS;
         cssTextClass = RRDiagram.CSS_SPECIAL_SEQUENCE_TEXT_CLASS;
+        if(!svgContent.isStyleDefined(cssClass)) {
+          String specialSequenceBorderColor = Utils.convertColorToHtml(rrDiagramToSVG.getSpecialSequenceBorderColor());
+          String specialSequenceFillColor = Utils.convertColorToHtml(rrDiagramToSVG.getSpecialSequenceFillColor());
+          Font specialSequenceFont = rrDiagramToSVG.getSpecialSequenceFont();
+          String specialSequenceTextColor = Utils.convertColorToHtml(rrDiagramToSVG.getSpecialSequenceTextColor());
+          cssClass = svgContent.setCSSClass(cssClass, "fill:" + specialSequenceFillColor + ";stroke:" + specialSequenceBorderColor + ";");
+          cssTextClass = svgContent.setCSSClass(cssTextClass, "fill:" + specialSequenceTextColor + ";" + Utils.convertFontToCss(specialSequenceFont));
+        }
         shape = rrDiagramToSVG.getSpecialSequenceShape();
-        svgContent.setSpecialSequenceUsed(true);
         break;
       default:
         throw new IllegalStateException("Unknown type: " + type);
@@ -138,8 +159,8 @@ public class RRText extends RRElement {
         // We should calculate if we want to support transparent shapes.
         int connectorOffset = layoutInfo.getConnectorOffset();
         svgContent.addLineConnector(xOffset, yOffset + connectorOffset, xOffset + insets.left, yOffset + connectorOffset);
-        svgContent.addLineConnector(xOffset + width, yOffset + connectorOffset, xOffset + width - insets.right, yOffset + connectorOffset);
         svgContent.addElement("<polygon class=\"" + cssClass + "\" points=\"" + xOffset + " " + (yOffset + height / 2) + " " + (xOffset + insets.left) + " " + yOffset + " " + (xOffset + width - insets.right) + " " + yOffset + " " + (xOffset + width) + " " + (yOffset + height / 2) + " " + (xOffset + width - insets.right) + " " + (yOffset + height) + " " + (xOffset + insets.left) + " " + (yOffset + height) + "\"/>");
+        svgContent.addLineConnector(xOffset + width, yOffset + connectorOffset, xOffset + width - insets.right, yOffset + connectorOffset);
         break;
     }
     FontRenderContext fontRenderContext = new FontRenderContext(null, true, false);

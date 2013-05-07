@@ -57,33 +57,34 @@ public class RRChoice extends RRElement {
       int height = layoutInfo2.getHeight();
       y2 = yOffset2 + layoutInfo2.getConnectorOffset();
       if(i == 0) {
+        // Line to first element
         svgContent.addLineConnector(x1 - 10, y1, x1 + 10, y1);
-        svgContent.addLineConnector(xOffset2 + width, y2, x2 + 10, y2);
       } else {
-        svgContent.addPathConnector(
-            "M " + x1 + " " + (y2 - 5) +
-            " Q " + x1 + " " + y2 + " " + (x1 + 5) + " " + y2 +
-            " H " + xOffset2
-        );
-        svgContent.addPathConnector(
-            "M " + x2 + " " + (y2 - 5) +
-            " Q " + x2 + " " + y2 + " " + (x2 - 5) + " " + y2 +
-            " H " + (xOffset2 + width)
-        );
+        if(i == rrElements.length - 1) {
+          // Curve and vertical down
+          svgContent.addPathConnector(x1 - 5, y1, "q5 0 5 5", x1, y1 + 5);
+          svgContent.addLineConnector(x1, y1 + 5, x1, y2 - 5);
+        }
+        // Curve and horizontal line to element
+        svgContent.addPathConnector(x1, y2 - 5, "q0 5 5 5", x1 + 5, y2);
+        svgContent.addLineConnector(x1 + 5, y2, xOffset2, y2);
       }
       rrElement.toSVG(rrDiagramToSVG, xOffset2, yOffset2, svgContent);
+      if(i == 0) {
+        // Line to first element
+        svgContent.addLineConnector(xOffset2 + width, y2, x2 + 10, y2);
+      } else {
+        // Horizontal line to element and curve
+        svgContent.addLineConnector(x2 - 5, y2, xOffset2 + width, y2);
+        svgContent.addPathConnector(x2 - 5, y2, "q5 0 5-5", x2, y2 - 5);
+        if(i == rrElements.length - 1) {
+          // Vertical up and curve
+          svgContent.addLineConnector(x2, y2 - 5, x2, y1 + 5);
+          svgContent.addPathConnector(x2, y1 + 5, "q0-5 5-5", x2 + 5, y1);
+        }
+      }
       yOffset2 += height + 5;
     }
-    svgContent.addPathConnector(
-        "M " + (x1 - 5) + " " + y1 +
-        " Q " + x1 + " " + y1 + " " + x1 + " " + (y1 + 5) +
-        " V " + (y2 - 5)
-    );
-    svgContent.addPathConnector(
-        "M " + (x2 + 5) + " " + y1 +
-        " Q " + x2 + " " + y1 + " " + x2 + " " + (y1 + 5) +
-        " V " + (y2 - 5)
-    );
   }
 
 }
