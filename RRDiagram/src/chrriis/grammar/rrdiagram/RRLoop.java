@@ -122,11 +122,11 @@ public class RRLoop extends RRElement {
     svgContent.addLineConnector(x2, y1 + 5, x2, y2 - 5);
     svgContent.addPathConnector(x2, y2 - 5, "q0 5-5 5", x2 - 5, y2);
     if(cardinalitiesText != null) {
-      String cssClass = RRDiagram.CSS_LOOP_CARDINALITIES_TEXT_CLASS;
-      if(!svgContent.isStyleDefined(cssClass)) {
+      String cssClass = svgContent.getDefinedCSSClass(RRDiagram.CSS_LOOP_CARDINALITIES_TEXT_CLASS);
+      if(cssClass == null) {
         Font loopFont = rrDiagramToSVG.getLoopFont();
         String loopTextColor = Utils.convertColorToHtml(rrDiagramToSVG.getLoopTextColor());
-        cssClass = svgContent.setCSSClass(cssClass, "fill:" + loopTextColor + ";" + Utils.convertFontToCss(loopFont));
+        cssClass = svgContent.setCSSClass(RRDiagram.CSS_LOOP_CARDINALITIES_TEXT_CLASS, "fill:" + loopTextColor + ";" + Utils.convertFontToCss(loopFont));
       }
       svgContent.addElement("<text class=\"" + cssClass + "\" x=\"" + (x2 - cardinalitiesWidth) + "\" y=\"" + (y2 - fontYOffset - 5) + "\">" + Utils.escapeXML(cardinalitiesText) + "</text>");
     }

@@ -100,45 +100,45 @@ public class RRText extends RRElement {
       case RULE:
         insets = rrDiagramToSVG.getRuleInsets();
         font = rrDiagramToSVG.getRuleFont();
-        cssClass = RRDiagram.CSS_RULE_CLASS;
-        cssTextClass = RRDiagram.CSS_RULE_TEXT_CLASS;
-        if(!svgContent.isStyleDefined(cssClass)) {
+        cssClass = svgContent.getDefinedCSSClass(RRDiagram.CSS_RULE_CLASS);
+        cssTextClass = svgContent.getDefinedCSSClass(RRDiagram.CSS_RULE_TEXT_CLASS);
+        if(cssClass == null) {
           String ruleBorderColor = Utils.convertColorToHtml(rrDiagramToSVG.getRuleBorderColor());
           String ruleFillColor = Utils.convertColorToHtml(rrDiagramToSVG.getRuleFillColor());
           Font ruleFont = rrDiagramToSVG.getRuleFont();
           String ruleTextColor = Utils.convertColorToHtml(rrDiagramToSVG.getRuleTextColor());
-          cssClass = svgContent.setCSSClass(cssClass, "fill:" + ruleFillColor + ";stroke:" + ruleBorderColor + ";");
-          cssTextClass = svgContent.setCSSClass(cssTextClass, "fill:" + ruleTextColor + ";" + Utils.convertFontToCss(ruleFont));
+          cssClass = svgContent.setCSSClass(RRDiagram.CSS_RULE_CLASS, "fill:" + ruleFillColor + ";stroke:" + ruleBorderColor + ";");
+          cssTextClass = svgContent.setCSSClass(RRDiagram.CSS_RULE_TEXT_CLASS, "fill:" + ruleTextColor + ";" + Utils.convertFontToCss(ruleFont));
         }
         shape = rrDiagramToSVG.getRuleShape();
         break;
       case LITERAL:
         insets = rrDiagramToSVG.getLiteralInsets();
         font = rrDiagramToSVG.getLiteralFont();
-        cssClass = RRDiagram.CSS_LITERAL_CLASS;
-        cssTextClass = RRDiagram.CSS_LITERAL_TEXT_CLASS;
-        if(!svgContent.isStyleDefined(cssClass)) {
+        cssClass = svgContent.getDefinedCSSClass(RRDiagram.CSS_LITERAL_CLASS);
+        cssTextClass = svgContent.getDefinedCSSClass(RRDiagram.CSS_LITERAL_TEXT_CLASS);
+        if(cssClass == null) {
           String literalBorderColor = Utils.convertColorToHtml(rrDiagramToSVG.getLiteralBorderColor());
           String literalFillColor = Utils.convertColorToHtml(rrDiagramToSVG.getLiteralFillColor());
           Font literalFont = rrDiagramToSVG.getLiteralFont();
           String literalTextColor = Utils.convertColorToHtml(rrDiagramToSVG.getLiteralTextColor());
-          cssClass = svgContent.setCSSClass(cssClass, "fill:" + literalFillColor + ";stroke:" + literalBorderColor + ";");
-          cssTextClass = svgContent.setCSSClass(cssTextClass, "fill:" + literalTextColor + ";" + Utils.convertFontToCss(literalFont));
+          cssClass = svgContent.setCSSClass(RRDiagram.CSS_LITERAL_CLASS, "fill:" + literalFillColor + ";stroke:" + literalBorderColor + ";");
+          cssTextClass = svgContent.setCSSClass(RRDiagram.CSS_LITERAL_TEXT_CLASS, "fill:" + literalTextColor + ";" + Utils.convertFontToCss(literalFont));
         }
         shape = rrDiagramToSVG.getLiteralShape();
         break;
       case SPECIAL_SEQUENCE:
         insets = rrDiagramToSVG.getSpecialSequenceInsets();
         font = rrDiagramToSVG.getSpecialSequenceFont();
-        cssClass = RRDiagram.CSS_SPECIAL_SEQUENCE_CLASS;
-        cssTextClass = RRDiagram.CSS_SPECIAL_SEQUENCE_TEXT_CLASS;
-        if(!svgContent.isStyleDefined(cssClass)) {
+        cssClass = svgContent.getDefinedCSSClass(RRDiagram.CSS_SPECIAL_SEQUENCE_CLASS);
+        cssTextClass = svgContent.getDefinedCSSClass(RRDiagram.CSS_SPECIAL_SEQUENCE_TEXT_CLASS);
+        if(cssClass == null) {
           String specialSequenceBorderColor = Utils.convertColorToHtml(rrDiagramToSVG.getSpecialSequenceBorderColor());
           String specialSequenceFillColor = Utils.convertColorToHtml(rrDiagramToSVG.getSpecialSequenceFillColor());
           Font specialSequenceFont = rrDiagramToSVG.getSpecialSequenceFont();
           String specialSequenceTextColor = Utils.convertColorToHtml(rrDiagramToSVG.getSpecialSequenceTextColor());
-          cssClass = svgContent.setCSSClass(cssClass, "fill:" + specialSequenceFillColor + ";stroke:" + specialSequenceBorderColor + ";");
-          cssTextClass = svgContent.setCSSClass(cssTextClass, "fill:" + specialSequenceTextColor + ";" + Utils.convertFontToCss(specialSequenceFont));
+          cssClass = svgContent.setCSSClass(RRDiagram.CSS_SPECIAL_SEQUENCE_CLASS, "fill:" + specialSequenceFillColor + ";stroke:" + specialSequenceBorderColor + ";");
+          cssTextClass = svgContent.setCSSClass(RRDiagram.CSS_SPECIAL_SEQUENCE_TEXT_CLASS, "fill:" + specialSequenceTextColor + ";" + Utils.convertFontToCss(specialSequenceFont));
         }
         shape = rrDiagramToSVG.getSpecialSequenceShape();
         break;

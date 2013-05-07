@@ -245,8 +245,9 @@ public class RRDiagram {
       return elementsSB.toString();
     }
     private Map<String, String> cssClassToDefinitionMap = new HashMap<String, String>();
-    public boolean isStyleDefined(String style) {
-      return cssClassToDefinitionMap.containsKey(style);
+    public String getDefinedCSSClass(String style) {
+      String definition = cssClassToDefinitionMap.get(style);
+      return definition == null? null: definition.endsWith(";")? style: definition;
     }
     /**
      * @return the name of a CSS class to use, which can be different from the cssClass parameter if they share the same definition.
