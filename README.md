@@ -3,11 +3,13 @@ RRDiagram
 
 Generate railroad diagrams from code or BNF. Generate BNF from code.
 
-RR Diagram allows to generate railroad diagrams (also called syntax diagrams) from code or from BNF notation. The output format is SVG which can be integrated to web pages and where rules can contain links.
+RR Diagram allows to generate railroad diagrams (also called syntax diagrams) from code or from BNF notation. The output format is a very compact SVG image which can be integrated to web pages and where rules can contain links.
 
 RR Diagram can also be used to generate BNF notation from a model.
 
 The generated output was insipired from this online-only version: http://railroad.my28msec.com/rr/ui
+
+Binaries can be found on the [SourceForge page](https://sourceforge.net/projects/rrdiagram/).
 
 Example
 =======
@@ -15,7 +17,7 @@ Example
 This is the kind of diagrams that can get generated:
 ![H2 Select](http://rrdiagram.sourceforge.net/H2Select.svg)
 
-The above is generated using the right converters options using this BNF:
+The above is generated using the right convertion options on this BNF:
 <pre>
 H2_SELECT = 
 'SELECT' [ 'TOP' term ] [ 'DISTINCT' | 'ALL' ] selectExpression {',' selectExpression} \
