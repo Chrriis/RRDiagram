@@ -25,19 +25,19 @@ import chrriis.grammar.model.SpecialSequence;
 public class RRDiagramTests {
 
   @Test
-  public void testConsecutiveRuleReferencesSeparatedByNewline() throws Exception {
+  public void testConsecutiveRuleReferencesSeparatedByNewline() {
     assertEquals(5, $(svg("rule = a b\nc d\n\te;")).find("rect").size());
     assertEquals(5, $(svg("rule = a b\r\nc d\ne;")).find("rect").size());
   }
 
   @Test
-  public void testGrammarToString() throws Exception {
+  public void testGrammarToString() {
     assertEquals("r = a b;", grammar("r = a b;").toString());
     assertEquals("r1 = a b;\nr2 = c d;", grammar("r1 = a b;\nr2 = c d;").toString());
   }
 
   @Test
-  public void testRuleToString() throws Exception {
+  public void testRuleToString() {
     assertEquals("r = a b;", rule("r = a b;").toString());
   }
 
@@ -75,7 +75,7 @@ public class RRDiagramTests {
 
   // Test utilities
 
-  private String svg(String string) throws IOException {
+  private String svg(String string) {
     Grammar grammar = grammar(string);
     Rule[] rules = grammar.getRules();
     GrammarToRRDiagram grammarToRRDiagram = new GrammarToRRDiagram();
@@ -85,13 +85,13 @@ public class RRDiagramTests {
     return svg;
   }
 
-  private Grammar grammar(String string) throws IOException {
+  private Grammar grammar(String string) {
     BNFToGrammar bnfToGrammar = new BNFToGrammar();
-    Grammar grammar = bnfToGrammar.convert(new StringReader(string));
+    Grammar grammar = bnfToGrammar.convert(string);
     return grammar;
   }
 
-  private Rule rule(String string) throws IOException {
+  private Rule rule(String string) {
     return grammar(string).getRules()[0];
   }
 }

@@ -9,6 +9,7 @@ package chrriis.grammar.model;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -277,6 +278,15 @@ public class BNFToGrammar {
 
   private static boolean isNoop(Expression expression) {
     return expression instanceof Sequence && ((Sequence)expression).getExpressions().length == 0;
+  }
+
+  public Grammar convert(String string) {
+    try {
+      return convert(new StringReader(string));
+    } catch (IOException e) {
+      // Doesn't happen
+      throw new RuntimeException(e);
+    }
   }
 
   public Grammar convert(Reader reader) throws IOException {
