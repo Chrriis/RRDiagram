@@ -387,7 +387,10 @@ public class BNFToGrammar {
           }
           switch(c) {
             case ',':
-            case ' ': {
+            case ' ':
+            case '\n':
+            case '\r':
+            case '\t': {
               String content = sb.toString().trim();
               if(content.length() > 0) {
                 parentChunk.addChunk(new Chunk(ChunkType.RULE, content));

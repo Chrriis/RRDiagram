@@ -75,7 +75,7 @@ The supported BNF subset when reading is the following:
     ::=
 - concatenation
     ,
-    &lt;space&gt;
+    &lt;whitespace&gt;
 - termination
     ;
 - alternation
