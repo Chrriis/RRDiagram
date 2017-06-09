@@ -7,6 +7,7 @@ Licence terms: LGPL (see licence.txt)
 
 * Version 0.9.4 (unreleased):
 
+- [#12] Implement Grammar.toString() etc.
 - [#10] Newlines separating rule references lead to the separated rules becoming one
 - [#5] Change the license to ASL 2.0
 - [#4] Make this a Maven project

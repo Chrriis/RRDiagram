@@ -33,4 +33,8 @@ public class Grammar {
     return sb.toString();
   }
 
+  @Override
+  public String toString() {
+    return toBNF(new GrammarToBNF());
+  }
 }
