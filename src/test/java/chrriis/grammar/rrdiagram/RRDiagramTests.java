@@ -1,12 +1,14 @@
 package chrriis.grammar.rrdiagram;
 
-import static org.joox.JOOX.$;
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
 import java.io.StringReader;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.junit.Test;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 
 import chrriis.grammar.model.BNFToGrammar;
 import chrriis.grammar.model.Choice;
@@ -26,8 +28,8 @@ public class RRDiagramTests {
 
   @Test
   public void testConsecutiveRuleReferencesSeparatedByNewline() {
-    assertEquals(5, $(svg("rule = a b\nc d\n\te;")).find("rect").size());
-    assertEquals(5, $(svg("rule = a b\r\nc d\ne;")).find("rect").size());
+    assertEquals(5, countElements("rect", svg("rule = a b\nc d\n\te;")));
+    assertEquals(5, countElements("rect", svg("rule = a b\r\nc d\ne;")));
   }
 
   @Test
@@ -93,5 +95,15 @@ public class RRDiagramTests {
 
   private Rule rule(String string) {
     return grammar(string).getRules()[0];
+  }
+
+  private int countElements(String tagName, String svg) {
+    try {
+      Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(svg)));
+      return document.getElementsByTagName(tagName).getLength();
+    }
+    catch (Exception e) {
+      throw new RuntimeException(e);
+    }
   }
 }
