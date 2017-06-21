@@ -105,4 +105,4 @@ When getting the BNF syntax from the grammar model, it is possible to tweak the 
 License
 =======
 
-This library is provided under the LGPL, version 2.1 or later.
+This library is provided under the ASL 2.0.

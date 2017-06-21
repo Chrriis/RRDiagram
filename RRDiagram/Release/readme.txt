@@ -1,7 +1,7 @@
 RR Diagram
 https://github.com/Chrriis/RRDiagram
 Christopher Deckers (chrriis@nextencia.net)
-Licence terms: LGPL (see licence.txt)
+Licence terms: ASL 2.0 (see licence.txt)
 
 
 1. What is RR Diagram?
