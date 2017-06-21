@@ -348,7 +348,7 @@ public class RRDiagram {
     String elements = svgContent.getElements();
     // Then generate the rest (CSS and SVG container tags) based on that usage.
     StringBuilder sb = new StringBuilder();
-    sb.append("<svg version=\"1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns=\"http://www.w3.org/2000/svg\" width=\"").append(width).append("\" height=\"").append(height).append("\">").append(SVG_ELEMENTS_SEPARATOR);
+    sb.append("<svg version=\"1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns=\"http://www.w3.org/2000/svg\" width=\"").append(width).append("\" height=\"").append(height).append("\" viewbox=\"0 0 ").append(width).append(" ").append(height).append("\">").append(SVG_ELEMENTS_SEPARATOR);
     String styles = svgContent.getCSSStyles();
     if(styles.length() > 0) {
       sb.append("<defs><style type=\"text/css\">").append(SVG_ELEMENTS_SEPARATOR);
