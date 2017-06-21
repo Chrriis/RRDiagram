@@ -63,14 +63,14 @@ public class GrammarToBNF {
     return isUsingMultiplicationTokens;
   }
 
-  private String ruleConsideredAsLinebreak;
+  private String ruleConsideredAsLineBreak;
 
-  public void setRuleConsideredAsLineBreak(String ruleConsideredAsLinebreak) {
-    this.ruleConsideredAsLinebreak = ruleConsideredAsLinebreak;
+  public void setRuleConsideredAsLineBreak(String ruleConsideredAsLineBreak) {
+    this.ruleConsideredAsLineBreak = ruleConsideredAsLineBreak;
   }
 
-  public String getRuleConsideredAsLinebreak() {
-    return ruleConsideredAsLinebreak;
+  public String getRuleConsideredAsLineBreak() {
+    return ruleConsideredAsLineBreak;
   }
 
   public String convert(Grammar grammar) {

@@ -41,7 +41,7 @@ public class RuleReference extends Expression {
   @Override
   protected void toBNF(GrammarToBNF grammarToBNF, StringBuilder sb, boolean isNested) {
     sb.append(ruleName);
-    String ruleConsideredAsLinebreak = grammarToBNF.getRuleConsideredAsLinebreak();
+    String ruleConsideredAsLinebreak = grammarToBNF.getRuleConsideredAsLineBreak();
     if(ruleConsideredAsLinebreak != null && ruleConsideredAsLinebreak.equals(ruleName)) {
       sb.append("\n");
     }
