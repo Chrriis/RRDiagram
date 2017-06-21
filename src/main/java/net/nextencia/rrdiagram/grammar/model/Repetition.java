@@ -130,7 +130,6 @@ public class Repetition extends Expression {
         }
       }
     }
-    sb.append("");
   }
 
 }
