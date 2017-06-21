@@ -30,8 +30,8 @@ public class RuleReference extends Expression {
 
   @Override
   protected RRElement toRRElement(GrammarToRRDiagram grammarToRRDiagram) {
-    String ruleConsideredAsLinebreak = grammarToRRDiagram.getRuleConsideredAsLinebreak();
-    if(ruleConsideredAsLinebreak != null && ruleConsideredAsLinebreak.equals(ruleName)) {
+    String ruleConsideredAsLineBreak = grammarToRRDiagram.getRuleConsideredAsLineBreak();
+    if(ruleConsideredAsLineBreak != null && ruleConsideredAsLineBreak.equals(ruleName)) {
       return new RRBreak();
     }
     RuleLinkProvider ruleLinkProvider = grammarToRRDiagram.getRuleLinkProvider();
@@ -41,8 +41,8 @@ public class RuleReference extends Expression {
   @Override
   protected void toBNF(GrammarToBNF grammarToBNF, StringBuilder sb, boolean isNested) {
     sb.append(ruleName);
-    String ruleConsideredAsLinebreak = grammarToBNF.getRuleConsideredAsLineBreak();
-    if(ruleConsideredAsLinebreak != null && ruleConsideredAsLinebreak.equals(ruleName)) {
+    String ruleConsideredAsLineBreak = grammarToBNF.getRuleConsideredAsLineBreak();
+    if(ruleConsideredAsLineBreak != null && ruleConsideredAsLineBreak.equals(ruleName)) {
       sb.append("\n");
     }
   }
