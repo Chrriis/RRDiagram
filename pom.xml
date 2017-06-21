@@ -3,8 +3,8 @@
     
     <modelVersion>4.0.0</modelVersion>
     
-    <groupId>chrriis</groupId>
-    <artifactId>RRDiagram</artifactId>
+    <groupId>net.nextencia</groupId>
+    <artifactId>rrdiagram</artifactId>
     <version>0.9.4</version>
     
     <name>RRDiagram</name>
