@@ -39,9 +39,9 @@ public class Sequence extends Expression {
       if(i < expressions.length - 1 && expression instanceof RuleReference && expressions[i + 1] instanceof Repetition) {
         RuleReference ruleLink = (RuleReference)expression;
         Repetition repetition = (Repetition)expressions[i + 1];
-        Expression reptitionExpression = repetition.getExpression();
-        if(reptitionExpression instanceof Sequence) {
-          Expression[] subExpressions = ((Sequence)reptitionExpression).getExpressions();
+        Expression repetitionExpression = repetition.getExpression();
+        if(repetitionExpression instanceof Sequence) {
+          Expression[] subExpressions = ((Sequence)repetitionExpression).getExpressions();
           if(subExpressions.length == 2 && subExpressions[0] instanceof Literal && subExpressions[1] instanceof RuleReference && ((RuleReference)subExpressions[1]).getRuleName().equals(ruleLink.getRuleName())) {
             Integer maxRepetitionCount = repetition.getMaxRepetitionCount();
             if(maxRepetitionCount == null || maxRepetitionCount > 1) {
