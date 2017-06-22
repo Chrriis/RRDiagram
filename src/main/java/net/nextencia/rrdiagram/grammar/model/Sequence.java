@@ -35,12 +35,20 @@ public class Sequence extends Expression {
     for(int i=0; i<expressions.length; i++) {
       Expression expression = expressions[i];
       RRElement rrElement = expression.toRRElement(grammarToRRDiagram);
-      // Treat special case of: a (',' a)*
+      // Treat special case of: "a (',' a)*" and "a (a)*"
       if(i < expressions.length - 1 && expression instanceof RuleReference && expressions[i + 1] instanceof Repetition) {
         RuleReference ruleLink = (RuleReference)expression;
         Repetition repetition = (Repetition)expressions[i + 1];
         Expression repetitionExpression = repetition.getExpression();
-        if(repetitionExpression instanceof Sequence) {
+        // Treat special case of: a (a)*
+        if(repetitionExpression instanceof RuleReference && ((RuleReference)repetitionExpression).getRuleName().equals(ruleLink.getRuleName())) {
+          Integer maxRepetitionCount = repetition.getMaxRepetitionCount();
+          if(maxRepetitionCount == null || maxRepetitionCount > 1) {
+            rrElement = new RRLoop(ruleLink.toRRElement(grammarToRRDiagram), null, repetition.getMinRepetitionCount(), (maxRepetitionCount == null? null: maxRepetitionCount));
+            i++;
+          }
+        } else if(repetitionExpression instanceof Sequence) {
+          // Treat special case of: a (',' a)*
           Expression[] subExpressions = ((Sequence)repetitionExpression).getExpressions();
           if(subExpressions.length == 2 && subExpressions[0] instanceof Literal && subExpressions[1] instanceof RuleReference && ((RuleReference)subExpressions[1]).getRuleName().equals(ruleLink.getRuleName())) {
             Integer maxRepetitionCount = repetition.getMaxRepetitionCount();

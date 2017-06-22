@@ -107,7 +107,7 @@ public class Repetition extends Expression {
         if(minRepetitionCount == maxRepetitionCount) {
           sb.append(minRepetitionCount);
           sb.append(" * ");
-          expression.toBNF(grammarToBNF, sb, false);
+          expression.toBNF(grammarToBNF, sb, isNested);
         } else {
           if(isNested) {
             sb.append("( ");

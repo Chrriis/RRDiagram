@@ -13,6 +13,7 @@ import org.xml.sax.InputSource;
 import net.nextencia.rrdiagram.grammar.model.BNFToGrammar;
 import net.nextencia.rrdiagram.grammar.model.Choice;
 import net.nextencia.rrdiagram.grammar.model.Grammar;
+import net.nextencia.rrdiagram.grammar.model.GrammarToBNF;
 import net.nextencia.rrdiagram.grammar.model.GrammarToRRDiagram;
 import net.nextencia.rrdiagram.grammar.model.Literal;
 import net.nextencia.rrdiagram.grammar.model.Repetition;
@@ -20,8 +21,6 @@ import net.nextencia.rrdiagram.grammar.model.Rule;
 import net.nextencia.rrdiagram.grammar.model.RuleReference;
 import net.nextencia.rrdiagram.grammar.model.Sequence;
 import net.nextencia.rrdiagram.grammar.model.SpecialSequence;
-import net.nextencia.rrdiagram.grammar.rrdiagram.RRDiagram;
-import net.nextencia.rrdiagram.grammar.rrdiagram.RRDiagramToSVG;
 
 /**
  * @author Lukas Eder
@@ -75,6 +74,47 @@ public class RRDiagramTests {
     assertEquals("{ a }", new Repetition(new RuleReference("a"), 0, null).toString());
     assertEquals("[ a ]", new Repetition(new RuleReference("a"), 0, 1).toString());
     assertEquals("2 * [ a ]", new Repetition(new RuleReference("a"), 0, 2).toString());
+  }
+
+  @Test
+  public void testConversionsToBNF() {
+    String bnf1 =
+        "BNF1 = a*;" +
+        "BNF2 = a+;" +
+        "BNF3 = a?;" +
+        "BNF4 = a (',' a)*;" +
+        "BNF5 = 3 * a;" +
+        "BNF6 = 3 * a?;" +
+        "BNF7 = a 3 * (',' a);" +
+        "BNF8 = a 3 * (',' a)?;" +
+        "BNF9 = a (? [a-zA-Z]+ ?) 3 * (',' a)?;" +
+        "BNF10 = a | c | ();" +
+        "BNF11 = 3 * 'a<b\"';";
+    Grammar grammar1 = grammar(bnf1);
+    GrammarToBNF grammarToBNF = new GrammarToBNF();
+    String bnf2 = grammarToBNF.convert(grammar1);
+    // Resulting BNF may be different depending on format options.
+    // Nevertheless, they should be equivalent, and one way to test this is
+    // to produce the both SVG and compare them.
+//    System.err.println(bnf2);
+    Grammar grammar2 = grammar(bnf2);
+    Rule[] rules1 = grammar1.getRules();
+    Rule[] rules2 = grammar2.getRules();
+    assertEquals(rules1.length, rules2.length);
+    GrammarToRRDiagram grammarToRRDiagram = new GrammarToRRDiagram();
+    RRDiagramToSVG rrDiagramToSVG = new RRDiagramToSVG();
+    for (int i = 0; i < rules1.length; i++) {
+      Rule rule1 = rules1[i];
+      Rule rule2 = rules2[i];
+      assertEquals("Rules have same name", rule1.getName(), rule2.getName());
+      RRDiagram diagram1 = grammarToRRDiagram.convert(rule1);
+      String svg1 = rrDiagramToSVG.convert(diagram1);
+      RRDiagram diagram2 = grammarToRRDiagram.convert(rule2);
+      String svg2 = rrDiagramToSVG.convert(diagram2);
+//      System.err.println("SVG1: " + svg1);
+//      System.err.println("SVG2: " + svg2);
+      assertEquals("SVG for \"" + rule1.getName() + "\" are identical", svg1, svg2);
+    }
   }
 
   // Test utilities
