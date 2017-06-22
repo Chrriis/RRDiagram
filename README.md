@@ -7,7 +7,7 @@ RR Diagram is a Java library that generates railroad diagrams (also called synta
 
 RR Diagram can also be used to generate BNF notation from a model.
 
-The generated output was insipired from this online-only version: http://railroad.my28msec.com/rr/ui
+The generated output was inspired from this online-only version: http://railroad.my28msec.com/rr/ui
 
 Binaries can be found on the [SourceForge page](https://sourceforge.net/projects/rrdiagram/).
 
@@ -17,7 +17,7 @@ Example
 This is the kind of diagrams that can get generated:
 ![H2 Select](http://rrdiagram.sourceforge.net/H2Select.svg)
 
-The above is generated using the right convertion options on this BNF:
+The above is generated using the right conversion options on this BNF:
 <pre>
 H2_SELECT = 
 'SELECT' [ 'TOP' term ] [ 'DISTINCT' | 'ALL' ] selectExpression {',' selectExpression} \
