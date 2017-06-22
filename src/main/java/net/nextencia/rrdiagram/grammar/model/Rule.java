@@ -14,7 +14,7 @@ import net.nextencia.rrdiagram.grammar.rrdiagram.RRDiagram;
  */
 public class Rule {
 
-  public String name;
+  private String name;
   private Expression expression;
 
   public Rule(String name, Expression expression) {
