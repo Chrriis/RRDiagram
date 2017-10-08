@@ -8,6 +8,7 @@
 package net.nextencia.rrdiagram.grammar.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import net.nextencia.rrdiagram.grammar.rrdiagram.RRElement;
@@ -36,24 +37,28 @@ public class Sequence extends Expression {
       Expression expression = expressions[i];
       RRElement rrElement = expression.toRRElement(grammarToRRDiagram);
       // Treat special case of: "a (',' a)*" and "a (a)*"
-      if(i < expressions.length - 1 && expression instanceof RuleReference && expressions[i + 1] instanceof Repetition) {
-        RuleReference ruleLink = (RuleReference)expression;
+      if(i < expressions.length - 1 && expressions[i + 1] instanceof Repetition) {
         Repetition repetition = (Repetition)expressions[i + 1];
         Expression repetitionExpression = repetition.getExpression();
-        // Treat special case of: a (a)*
-        if(repetitionExpression instanceof RuleReference && ((RuleReference)repetitionExpression).getRuleName().equals(ruleLink.getRuleName())) {
-          Integer maxRepetitionCount = repetition.getMaxRepetitionCount();
-          if(maxRepetitionCount == null || maxRepetitionCount > 1) {
-            rrElement = new RRLoop(ruleLink.toRRElement(grammarToRRDiagram), null, repetition.getMinRepetitionCount(), (maxRepetitionCount == null? null: maxRepetitionCount));
-            i++;
-          }
-        } else if(repetitionExpression instanceof Sequence) {
-          // Treat special case of: a (',' a)*
+        if(repetitionExpression instanceof Sequence) {
+          // Treat special case of: "expr (',' expr)*"
           Expression[] subExpressions = ((Sequence)repetitionExpression).getExpressions();
-          if(subExpressions.length == 2 && subExpressions[0] instanceof Literal && subExpressions[1] instanceof RuleReference && ((RuleReference)subExpressions[1]).getRuleName().equals(ruleLink.getRuleName())) {
+          if(subExpressions.length == 2 && subExpressions[0] instanceof Literal) {
+            if(expression.equals(subExpressions[1])) {
+              Integer maxRepetitionCount = repetition.getMaxRepetitionCount();
+              if(maxRepetitionCount == null || maxRepetitionCount > 1) {
+                rrElement = new RRLoop(expression.toRRElement(grammarToRRDiagram), subExpressions[0].toRRElement(grammarToRRDiagram), repetition.getMinRepetitionCount(), (maxRepetitionCount == null? null: maxRepetitionCount));
+                i++;
+              }
+            }
+          }
+        } else if(expression instanceof RuleReference) {
+          RuleReference ruleLink = (RuleReference)expression;
+          // Treat special case of: a (a)*
+          if(repetitionExpression instanceof RuleReference && ((RuleReference)repetitionExpression).getRuleName().equals(ruleLink.getRuleName())) {
             Integer maxRepetitionCount = repetition.getMaxRepetitionCount();
             if(maxRepetitionCount == null || maxRepetitionCount > 1) {
-              rrElement = new RRLoop(ruleLink.toRRElement(grammarToRRDiagram), subExpressions[0].toRRElement(grammarToRRDiagram), repetition.getMinRepetitionCount(), (maxRepetitionCount == null? null: maxRepetitionCount));
+              rrElement = new RRLoop(ruleLink.toRRElement(grammarToRRDiagram), null, repetition.getMinRepetitionCount(), (maxRepetitionCount == null? null: maxRepetitionCount));
               i++;
             }
           }
@@ -86,6 +91,14 @@ public class Sequence extends Expression {
     if(isNested && expressions.length > 1) {
       sb.append(" )");
     }
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if(!(o instanceof Sequence)) {
+      return false;
+    }
+    return Arrays.equals(expressions, ((Sequence)o).expressions);
   }
 
 }

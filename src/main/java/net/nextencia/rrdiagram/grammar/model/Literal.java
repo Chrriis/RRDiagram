@@ -36,4 +36,12 @@ public class Literal extends Expression {
     sb.append(c);
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if(!(o instanceof Literal)) {
+      return false;
+    }
+    return text.equals(((Literal)o).text);
+  }
+
 }

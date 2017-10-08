@@ -8,6 +8,7 @@
 package net.nextencia.rrdiagram.grammar.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import net.nextencia.rrdiagram.grammar.rrdiagram.RRChoice;
@@ -82,6 +83,14 @@ public class Choice extends Expression {
         }
       }
     }
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if(!(o instanceof Choice)) {
+      return false;
+    }
+    return Arrays.equals(expressions, ((Choice)o).expressions);
   }
 
 }

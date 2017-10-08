@@ -47,4 +47,12 @@ public class RuleReference extends Expression {
     }
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if(!(o instanceof RuleReference)) {
+      return false;
+    }
+    return ruleName.equals(((RuleReference)o).ruleName);
+  }
+
 }

@@ -34,4 +34,12 @@ public class SpecialSequence extends Expression {
     sb.append(" ?)");
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if(!(o instanceof SpecialSequence)) {
+      return false;
+    }
+    return text.equals(((SpecialSequence)o).text);
+  }
+
 }
