@@ -4,7 +4,7 @@
   <target name="createJar" description="Create the Jar files">
     <delete file="RRDiagram.jar"/>
     <jar duplicate="preserve" destfile="RRDiagram.jar">
-	    <fileset dir="bin"/>
+	    <fileset dir="../target/classes"/>
 		</jar>
   </target>
 

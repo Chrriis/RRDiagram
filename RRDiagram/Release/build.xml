@@ -7,12 +7,12 @@
     <ant antfile="build.xml" inheritall="false"/>
     <zip duplicate="preserve" destfile="Release/RRDiagram.zip">
       <!-- Documents -->
-      <zipfileset dir="." includes="licence.txt"/>
+      <zipfileset dir=".." includes="LICENSE.txt"/>
       <zipfileset dir="Release" includes="readme.txt,changelog.txt"/>
       <!-- Binaries -->
-      <zipfileset dir="../RRDiagram" includes="RRDiagram.jar"/>
+      <zipfileset dir=".." includes="RRDiagram.jar"/>
       <!-- Library sources -->
-      <zipfileset dir="../RRDiagram/src" prefix="src"/>
+      <zipfileset dir="../src/main/java" prefix="src"/>
       <!-- Documentation -->
       <zipfileset dir="documentation/javadoc" prefix="api"/>
     </zip>
