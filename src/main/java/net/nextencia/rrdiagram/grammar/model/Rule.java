@@ -16,14 +16,24 @@ public class Rule {
 
   private String name;
   private Expression expression;
+  private String originalExpressionText;
 
   public Rule(String name, Expression expression) {
+    this(name, expression, null);
+  }
+
+  public Rule(String name, Expression expression, String originalExpressionText) {
     this.name = name;
     this.expression = expression;
+    this.originalExpressionText = originalExpressionText;
   }
 
   public String getName() {
     return name;
+  }
+
+  public String getOriginalExpressionText() {
+    return originalExpressionText;
   }
 
   RRDiagram toRRDiagram(GrammarToRRDiagram grammarToRRDiagram) {

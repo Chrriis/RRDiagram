@@ -7,6 +7,7 @@ Licence terms: ASL 2.0 (see licence.txt)
 
 * Version 0.9.4 (unreleased):
 
+- Store original parsed expression in rule.
 - Convert any "expr (',' expr)*" to a loop.
 - [#15] Rename packages and Maven groupId to net.nextencia.*
 - [#12] Implement Grammar.toString() etc.

@@ -297,7 +297,10 @@ public class BNFToGrammar {
       switch(c) {
         case '=': {
           Chunk chunk = new Chunk(ChunkType.GROUP);
-          loadExpression(chunk, reader, ';');
+          String expressionText = loadExpression(chunk, reader, ';');
+          if(expressionText.endsWith(";")) {
+            expressionText = expressionText.substring(0, expressionText.length() - 1);
+          }
           String ruleName = sb.toString();
           sb.delete(0, sb.length());
           if(ruleName.endsWith(":")) {
@@ -307,7 +310,8 @@ public class BNFToGrammar {
             }
           }
           ruleName = ruleName.trim();
-          ruleList.add(createRule(ruleName, chunk));
+          Rule rule = createRule(ruleName, chunk, expressionText);
+          ruleList.add(rule);
           break;
         }
         // Consider that '(' in rule name is start of a comment.
@@ -336,13 +340,14 @@ public class BNFToGrammar {
     return new Grammar(ruleList.toArray(new Rule[0]));
   }
 
-  private static Rule createRule(String name, Chunk chunk) {
+  private static Rule createRule(String name, Chunk chunk, String originalExpressionText) {
     chunk.prune();
     Expression expression = chunk.getExpression();
-    return new Rule(name, expression);
+    return new Rule(name, expression, originalExpressionText);
   }
 
-  private static void loadExpression(Chunk parentChunk, Reader reader, char stopChar) throws IOException {
+  private static String loadExpression(Chunk parentChunk, Reader reader, char stopChar) throws IOException {
+    StringBuilder expressionTextSB = new StringBuilder();
     char lastChar = 0;
     StringBuilder sb = new StringBuilder();
     boolean isFirst = true;
@@ -351,11 +356,12 @@ public class BNFToGrammar {
     boolean isLiteral = parentChunk.getType() == ChunkType.LITERAL;
     for(int x; (x=reader.read()) != -1; ) {
       char c = (char)x;
+      expressionTextSB.append(c);
       if(isLiteral) {
         if(c == stopChar) {
           String s = sb.toString();
           parentChunk.setText(s);
-          return;
+          return expressionTextSB.toString();
         }
         sb.append(c);
       } else {
@@ -382,7 +388,7 @@ public class BNFToGrammar {
             String comment = sb.toString();
             comment = comment.substring(1, comment.length() - 1).trim();
             parentChunk.setText(comment);
-            return;
+            return expressionTextSB.toString();
           }
           if(sb.length() > 0 || !Character.isWhitespace(c)) {
             sb.append(c);
@@ -393,7 +399,7 @@ public class BNFToGrammar {
             if(content.length() > 0) {
               parentChunk.addChunk(new Chunk(ChunkType.RULE, content));
             }
-            return;
+            return expressionTextSB.toString();
           }
           switch(c) {
             case ',':
@@ -436,7 +442,8 @@ public class BNFToGrammar {
               }
               sb.delete(0, sb.length());
               Chunk literalChunk = new Chunk(ChunkType.LITERAL);
-              loadExpression(literalChunk, reader, '\"');
+              String subExpressionText = loadExpression(literalChunk, reader, '\"');
+              expressionTextSB.append(subExpressionText);
               parentChunk.addChunk(literalChunk);
               break;
             }
@@ -447,7 +454,8 @@ public class BNFToGrammar {
               }
               sb.delete(0, sb.length());
               Chunk literalChunk = new Chunk(ChunkType.LITERAL);
-              loadExpression(literalChunk, reader, '\'');
+              String subExpressionText = loadExpression(literalChunk, reader, '\'');
+              expressionTextSB.append(subExpressionText);
               parentChunk.addChunk(literalChunk);
               break;
             }
@@ -458,7 +466,8 @@ public class BNFToGrammar {
               }
               sb.delete(0, sb.length());
               Chunk groupChunk = new Chunk(ChunkType.GROUP);
-              loadExpression(groupChunk, reader, ')');
+              String subExpressionText = loadExpression(groupChunk, reader, ')');
+              expressionTextSB.append(subExpressionText);
               parentChunk.addChunk(groupChunk);
               break;
             }
@@ -469,7 +478,8 @@ public class BNFToGrammar {
               }
               sb.delete(0, sb.length());
               Chunk optionChunk = new Chunk(ChunkType.OPTION);
-              loadExpression(optionChunk, reader, ']');
+              String subExpressionText = loadExpression(optionChunk, reader, ']');
+              expressionTextSB.append(subExpressionText);
               parentChunk.addChunk(optionChunk);
               break;
             }
@@ -481,7 +491,8 @@ public class BNFToGrammar {
               sb.delete(0, sb.length());
               Chunk repetitionChunk = new Chunk(ChunkType.REPETITION);
               repetitionChunk.setMinCount(0);
-              loadExpression(repetitionChunk, reader, '}');
+              String subExpressionText = loadExpression(repetitionChunk, reader, '}');
+              expressionTextSB.append(subExpressionText);
               parentChunk.addChunk(repetitionChunk);
               break;
             }
@@ -496,6 +507,7 @@ public class BNFToGrammar {
         lastChar = c;
       }
     }
+    return expressionTextSB.toString();
   }
 
 }
