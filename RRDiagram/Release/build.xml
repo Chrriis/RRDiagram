@@ -10,7 +10,7 @@
       <zipfileset dir=".." includes="LICENSE.txt"/>
       <zipfileset dir="Release" includes="readme.txt,changelog.txt"/>
       <!-- Binaries -->
-      <zipfileset dir=".." includes="RRDiagram.jar"/>
+      <zipfileset dir="." includes="RRDiagram.jar"/>
       <!-- Library sources -->
       <zipfileset dir="../src/main/java" prefix="src"/>
       <!-- Documentation -->
