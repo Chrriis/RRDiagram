@@ -236,4 +236,20 @@ public class RRDiagramToSVG {
     return specialSequenceFillColor;
   }
 
+  public static enum EndShape {
+    PLAIN,
+    CIRCLE,
+    CROSS,
+    DOUBLE_CROSS
+  }
+
+  private EndShape endShape = EndShape.PLAIN;
+
+  public void setEndShape(EndShape endShape) {
+    this.endShape = endShape;
+  }
+
+  public EndShape getEndShape() {
+    return endShape;
+  }
 }

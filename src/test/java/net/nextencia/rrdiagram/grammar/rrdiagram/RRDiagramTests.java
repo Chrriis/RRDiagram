@@ -2,11 +2,16 @@ package net.nextencia.rrdiagram.grammar.rrdiagram;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.StringReader;
+import java.io.Writer;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.junit.Test;
+import org.junit.Assert;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
@@ -117,14 +122,55 @@ public class RRDiagramTests {
     }
   }
 
+  @Test
+  public void testEndShape() {
+    RRDiagramToSVG rrDiagramToSVG = new RRDiagramToSVG();
+    final String grammar = "rule = a b;";
+    String svg;
+
+    // plain ends (default)
+    svg = svg(grammar, rrDiagramToSVG);
+    assertEquals(2, countElements("rect", svg));
+    assertEquals(0, countElements("ellipse", svg));
+    assertEquals(0, countElements("line", svg));
+    //saveFile(svg, "plain.svg");
+
+    // circle ends
+    rrDiagramToSVG.setEndShape(RRDiagramToSVG.EndShape.CIRCLE);
+    svg = svg(grammar, rrDiagramToSVG);
+    assertEquals(2, countElements("rect", svg));
+    assertEquals(2, countElements("ellipse", svg));
+    assertEquals(0, countElements("line", svg));
+    //saveFile(svg, "circle.svg");
+
+    // single cross ends
+    rrDiagramToSVG.setEndShape(RRDiagramToSVG.EndShape.CROSS);
+    svg = svg(grammar, rrDiagramToSVG);
+    assertEquals(2, countElements("rect", svg));
+    assertEquals(0, countElements("ellipse", svg));
+    assertEquals(2, countElements("line", svg));
+    //saveFile(svg, "cross.svg");
+
+    // double cross ends
+    rrDiagramToSVG.setEndShape(RRDiagramToSVG.EndShape.DOUBLE_CROSS);
+    svg = svg(grammar, rrDiagramToSVG);
+    assertEquals(2, countElements("rect", svg));
+    assertEquals(0, countElements("ellipse", svg));
+    assertEquals(4, countElements("line", svg));
+    //saveFile(svg, "double-cross.svg");
+  }
+
   // Test utilities
 
   private String svg(String string) {
+    return svg(string, new RRDiagramToSVG());
+  }
+
+  private String svg(String string, RRDiagramToSVG rrDiagramToSVG) {
     Grammar grammar = grammar(string);
     Rule[] rules = grammar.getRules();
     GrammarToRRDiagram grammarToRRDiagram = new GrammarToRRDiagram();
     RRDiagram diagram = grammarToRRDiagram.convert(rules[0]);
-    RRDiagramToSVG rrDiagramToSVG = new RRDiagramToSVG();
     String svg = rrDiagramToSVG.convert(diagram);
     return svg;
   }
@@ -148,4 +194,15 @@ public class RRDiagramTests {
       throw new RuntimeException(e);
     }
   }
+
+ private void saveFile(String string, String fileName) {
+    File file = new File("/tmp/" + fileName);
+    try {
+       Writer w = new FileWriter(file);
+       w.write(string);
+       w.close();
+    } catch (IOException ex) {
+       Assert.fail(ex.getMessage());
+    }
+ }
 }

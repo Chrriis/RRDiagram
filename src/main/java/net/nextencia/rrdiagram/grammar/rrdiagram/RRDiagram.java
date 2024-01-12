@@ -29,6 +29,7 @@ public class RRDiagram {
 
   private static final String SVG_ELEMENTS_SEPARATOR = "";//\n";
   private static final String CSS_CONNECTOR_CLASS = "c";
+  private static final String CSS_CONNECTOR_END_CLASS = "ce";
   static final String CSS_RULE_CLASS = "r";
   static final String CSS_RULE_TEXT_CLASS = "i";
   static final String CSS_LITERAL_CLASS = "l";
@@ -200,6 +201,9 @@ public class RRDiagram {
       }
     }
     public void addLineConnector(int x1, int y1, int x2, int y2) {
+      addLineConnector(x1, y1, x2, y2, null, 0);
+    }
+    public void addLineConnector(int x1, int y1, int x2, int y2, RRDiagramToSVG rrDiagramToSVG, int endSide) {
       int x1_ = Math.min(x1, x2);
       int y1_ = Math.min(y1, y2);
       int x2_ = Math.max(x1, x2);
@@ -207,6 +211,27 @@ public class RRDiagram {
       Object c = connectorList.isEmpty()? null: connectorList.get(connectorList.size() - 1);
       if(c == null || !(c instanceof SvgLine) || !((SvgLine)c).mergeLine(x1_, y1_, x2_, y2_)) {
         connectorList.add(new SvgLine(x1_, y1_, x2_, y2_));
+      }
+      if(rrDiagramToSVG != null && rrDiagramToSVG.getEndShape() != RRDiagramToSVG.EndShape.PLAIN && endSide != 0) {
+        String connectorColor = Utils.convertColorToHtml(rrDiagramToSVG.getConnectorColor());
+        String cssClass = setCSSClass(CSS_CONNECTOR_END_CLASS, "fill:white;stroke:" + connectorColor + ";");
+        double radius = rrDiagramToSVG.getEndShape() == RRDiagramToSVG.EndShape.CIRCLE ? 1.5 : 2;
+        String x3 = String.format("%.1f", endSide < 0 ? x1 + 0.5 : x2 - 0.5);
+        String x4 = String.format("%.1f", endSide < 0 ? x1 + radius + 0.5 : x2 - radius - 0.5);
+        int y3 = endSide < 0 ? y1 : y2;
+        String y4s = String.format("%.1f", y3 - radius);
+        String y5s = String.format("%.1f", y3 + radius);
+        switch (rrDiagramToSVG.getEndShape()) {
+        case CIRCLE:
+          String rs = String.format("%.2f", radius);
+          addElement("<ellipse class=\"" + cssClass + "\" cx=\""+x4+"\" cy=\""+y3+"\" rx=\""+rs+"\" ry=\""+rs+"\"/>");
+          break;
+        case DOUBLE_CROSS:
+          addElement("<line class=\"" + cssClass + "\" x1=\""+x4+"\" x2=\""+x4+"\" y1=\""+y4s+"\" y2=\""+y5s+"\"/>");
+        case CROSS:
+          addElement("<line class=\"" + cssClass + "\" x1=\""+x3+"\" x2=\""+x3+"\" y1=\""+y4s+"\" y2=\""+y5s+"\"/>");
+          break;
+        }
       }
     }
     private String getConnectorElement(RRDiagramToSVG rrDiagramToSVG) {
@@ -332,16 +357,19 @@ public class RRDiagram {
     // First, generate the XML for the elements, to know the usage.
     int xOffset = 0;
     int yOffset = 5;
-    for(RRElement rrElement: rrElementList) {
+    for (int i = 0; i < rrElementList.size(); i++) {
+      RRElement rrElement = rrElementList.get(i);
+      boolean first = i == 0, last = i == rrElementList.size() - 1;
+
       LayoutInfo layoutInfo2 = rrElement.getLayoutInfo();
       int connectorOffset2 = layoutInfo2.getConnectorOffset();
       int width2 = layoutInfo2.getWidth();
       int height2 = layoutInfo2.getHeight();
       int y1 = yOffset + connectorOffset2;
-      svgContent.addLineConnector(xOffset, y1, xOffset + 5, y1);
+      svgContent.addLineConnector(xOffset, y1, xOffset + 5, y1, rrDiagramToSVG, first ? -1 : 0);
       // TODO: add decorations (like arrows)?
       rrElement.toSVG(rrDiagramToSVG, xOffset + 5, yOffset, svgContent);
-      svgContent.addLineConnector(xOffset + 5 + width2, y1, xOffset + 5 + width2 + 5, y1);
+      svgContent.addLineConnector(xOffset + 5 + width2, y1, xOffset + 5 + width2 + 5, y1, rrDiagramToSVG, last ? 1 : 0);
       yOffset += height2 + 10;
     }
     String connectorElement = svgContent.getConnectorElement(rrDiagramToSVG);
