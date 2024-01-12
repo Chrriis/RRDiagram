@@ -77,7 +77,7 @@ public class RRText extends RRElement {
     Rectangle2D stringBounds = font.getStringBounds(text, fontRenderContext);
     int width = (int)Math.round(stringBounds.getWidth());
     int height = (int)Math.round(stringBounds.getHeight());
-    int connectorOffset = insets.top + height - fontYOffset;
+    int connectorOffset = insets.top + height/2;
     width += insets.left + insets.right;
     height += insets.top + insets.bottom;
     setLayoutInfo(new LayoutInfo(width, height, connectorOffset));
