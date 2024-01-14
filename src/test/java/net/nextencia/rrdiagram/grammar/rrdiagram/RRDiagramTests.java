@@ -10,8 +10,8 @@ import java.io.Writer;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.junit.Test;
 import org.junit.Assert;
+import org.junit.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
@@ -136,7 +136,8 @@ public class RRDiagramTests {
     //saveFile(svg, "plain.svg");
 
     // circle ends
-    rrDiagramToSVG.setEndShape(RRDiagramToSVG.EndShape.CIRCLE);
+    rrDiagramToSVG.setStartElement(new RRStartEndShapeElement(RRStartEndShapeElement.StartEndShape.EMPTY_CIRCLE, true));
+    rrDiagramToSVG.setEndElement(new RRStartEndShapeElement(RRStartEndShapeElement.StartEndShape.EMPTY_CIRCLE, false));
     svg = svg(grammar, rrDiagramToSVG);
     assertEquals(2, countElements("rect", svg));
     assertEquals(2, countElements("ellipse", svg));
@@ -144,7 +145,8 @@ public class RRDiagramTests {
     //saveFile(svg, "circle.svg");
 
     // single cross ends
-    rrDiagramToSVG.setEndShape(RRDiagramToSVG.EndShape.CROSS);
+    rrDiagramToSVG.setStartElement(new RRStartEndShapeElement(RRStartEndShapeElement.StartEndShape.VERTICAL_LINE, true));
+    rrDiagramToSVG.setEndElement(new RRStartEndShapeElement(RRStartEndShapeElement.StartEndShape.VERTICAL_LINE, false));
     svg = svg(grammar, rrDiagramToSVG);
     assertEquals(2, countElements("rect", svg));
     assertEquals(0, countElements("ellipse", svg));
@@ -152,7 +154,8 @@ public class RRDiagramTests {
     //saveFile(svg, "cross.svg");
 
     // double cross ends
-    rrDiagramToSVG.setEndShape(RRDiagramToSVG.EndShape.DOUBLE_CROSS);
+    rrDiagramToSVG.setStartElement(new RRStartEndShapeElement(RRStartEndShapeElement.StartEndShape.DOUBLE_VERTICAL_LINE, true));
+    rrDiagramToSVG.setEndElement(new RRStartEndShapeElement(RRStartEndShapeElement.StartEndShape.DOUBLE_VERTICAL_LINE, false));
     svg = svg(grammar, rrDiagramToSVG);
     assertEquals(2, countElements("rect", svg));
     assertEquals(0, countElements("ellipse", svg));

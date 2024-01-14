@@ -5,6 +5,10 @@ Licence terms: ASL 2.0 (see licence.txt)
 
 ---------------------------------- Change log ----------------------------------
 
+* Version 0.9.5 (Unreleased):
+- [#23] Option to align connectors on base line or vertically centered.
+- [#19] API to define elements to place at start and/or end of a rule.
+
 * Version 0.9.4 (October 9, 2017):
 
 - Store original parsed expression in rule.

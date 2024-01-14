@@ -86,6 +86,16 @@ public class RRDiagramToSVG {
     return ruleTextColor;
   }
 
+  private boolean isRuleTextAlignedOnBaseLine = true;
+
+  public void setRuleTextAlignedOnBaseLine(boolean isRuleTextAlignedOnBaseLine) {
+    this.isRuleTextAlignedOnBaseLine = isRuleTextAlignedOnBaseLine;
+  }
+
+  public boolean isRuleTextAlignedOnBaseLine() {
+    return isRuleTextAlignedOnBaseLine;
+  }
+
   private BoxShape ruleShape = BoxShape.RECTANGLE;
 
   public void setRuleShape(BoxShape ruleShape) {
@@ -236,20 +246,24 @@ public class RRDiagramToSVG {
     return specialSequenceFillColor;
   }
 
-  public static enum EndShape {
-    PLAIN,
-    CIRCLE,
-    CROSS,
-    DOUBLE_CROSS
+  private RRElement startElement = null;
+
+  public void setStartElement(RRElement startElement) {
+    this.startElement = startElement;
   }
 
-  private EndShape endShape = EndShape.PLAIN;
-
-  public void setEndShape(EndShape endShape) {
-    this.endShape = endShape;
+  public RRElement getStartElement() {
+    return startElement;
   }
 
-  public EndShape getEndShape() {
-    return endShape;
+  private RRElement endElement = null;
+
+  public void setEndElement(RRElement endElement) {
+    this.endElement = endElement;
   }
+
+  public RRElement getEndElement() {
+    return endElement;
+  }
+
 }
