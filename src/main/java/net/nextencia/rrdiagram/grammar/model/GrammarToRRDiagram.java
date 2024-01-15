@@ -8,6 +8,7 @@
 package net.nextencia.rrdiagram.grammar.model;
 
 import net.nextencia.rrdiagram.grammar.rrdiagram.RRDiagram;
+import net.nextencia.rrdiagram.grammar.rrdiagram.RRElement;
 
 /**
  * @author Christopher Deckers
@@ -31,6 +32,20 @@ public class GrammarToRRDiagram {
 
   public RuleLinkProvider getRuleLinkProvider() {
     return ruleLinkProvider;
+  }
+
+  public static interface SpecialSequenceElementProvider {
+    public RRElement getElement(String text);
+  }
+
+  private SpecialSequenceElementProvider specialSequenceElementProvider;
+
+  public void setSpecialSequenceElementProvider(SpecialSequenceElementProvider specialSequenceElementProvider) {
+    this.specialSequenceElementProvider = specialSequenceElementProvider;
+  }
+
+  public SpecialSequenceElementProvider getSpecialSequenceElementProvider() {
+    return specialSequenceElementProvider;
   }
 
   private String ruleConsideredAsLineBreak;

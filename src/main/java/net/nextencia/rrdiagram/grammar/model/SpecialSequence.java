@@ -7,6 +7,7 @@
  */
 package net.nextencia.rrdiagram.grammar.model;
 
+import net.nextencia.rrdiagram.grammar.model.GrammarToRRDiagram.SpecialSequenceElementProvider;
 import net.nextencia.rrdiagram.grammar.rrdiagram.RRElement;
 import net.nextencia.rrdiagram.grammar.rrdiagram.RRText;
 import net.nextencia.rrdiagram.grammar.rrdiagram.RRText.Type;
@@ -24,7 +25,12 @@ public class SpecialSequence extends Expression {
 
   @Override
   protected RRElement toRRElement(GrammarToRRDiagram grammarToRRDiagram) {
-    return new RRText(Type.SPECIAL_SEQUENCE, text, null);
+    SpecialSequenceElementProvider specialSequenceElementProvider = grammarToRRDiagram.getSpecialSequenceElementProvider();
+    RRElement element = specialSequenceElementProvider == null? null: specialSequenceElementProvider.getElement(text);
+    if(element == null) {
+      element = new RRText(Type.SPECIAL_SEQUENCE, text, null);
+    }
+    return element;
   }
 
   @Override
