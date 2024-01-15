@@ -7,7 +7,7 @@ RR Diagram is a Java library that generates railroad diagrams (also called synta
 
 RR Diagram can also be used to generate BNF notation from a model.
 
-The generated output was inspired from this online-only version: http://railroad.my28msec.com/rr/ui
+The generated output was inspired from this online-only version <http://www.bottlecaps.de/rr/ui>.
 
 Binaries can be found on the [SourceForge page](https://sourceforge.net/projects/rrdiagram/).
 
