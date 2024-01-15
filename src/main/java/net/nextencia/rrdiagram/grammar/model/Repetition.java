@@ -138,7 +138,7 @@ public class Repetition extends Expression {
       return false;
     }
     Repetition exp2 = (Repetition)o;
-    return expression.equals(exp2.expression) && minRepetitionCount == exp2.minRepetitionCount && maxRepetitionCount == null? exp2.maxRepetitionCount == null: maxRepetitionCount.equals(exp2.maxRepetitionCount);
+    return expression.equals(exp2.expression) && minRepetitionCount == exp2.minRepetitionCount && (maxRepetitionCount == null? exp2.maxRepetitionCount == null: maxRepetitionCount.equals(exp2.maxRepetitionCount));
   }
 
 }

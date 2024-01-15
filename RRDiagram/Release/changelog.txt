@@ -9,6 +9,7 @@ Licence terms: ASL 2.0 (see licence.txt)
 - [#23] Option to align connectors on base line or vertically centered.
 - [#19] API to define elements to place at start and/or end of a rule.
 - [#22] GrammarToRRDiagram config to replace special sequences with custom elements.
+- [#20] Incorrect condition causing exception on "func_mod+ ('private' func_mod*)?".
 
 
 * Version 0.9.4 (October 9, 2017):
