@@ -329,16 +329,26 @@ public class RRDiagram {
         rrElementList.set(rrElementListCount - 1, new RRSequence(rrElementList.get(rrElementListCount - 1), endElement));
       }
     }
+    boolean isShowingConnectorLineContinuations = rrDiagramToSVG.isShowingConnectorLineContinuations();
     int width = 5;
     int height = 5;
     for (int i = 0; i < rrElementListCount; i++) {
+      boolean isFirst = i == 0;
+      boolean isLast = i == rrElementListCount - 1;
       if(i > 0) {
         height += 5;
       }
       RRElement rrElement = rrElementList.get(i);
       rrElement.computeLayoutInfo(rrDiagramToSVG);
       LayoutInfo layoutInfo = rrElement.getLayoutInfo();
-      width = Math.max(width, 5 + layoutInfo.getWidth() + 5);
+      int computedWidth = 5 + layoutInfo.getWidth() + 5;
+      if(!isFirst && isShowingConnectorLineContinuations) {
+        computedWidth += 8;
+      }
+      if(!isLast && isShowingConnectorLineContinuations) {
+        computedWidth += 8;
+      }
+      width = Math.max(width, computedWidth);
       height += layoutInfo.getHeight() + 5;
     }
     SvgContent svgContent = new SvgContent();
@@ -355,6 +365,11 @@ public class RRDiagram {
       int height2 = layoutInfo2.getHeight();
       int y1 = yOffset + connectorOffset2;
       int x = xOffset;
+      if(!isFirst && isShowingConnectorLineContinuations) {
+        svgContent.addLineConnector(x, y1, x + 2, y1);
+        svgContent.addLineConnector(x + 4, y1, x + 6, y1);
+        x += 8;
+      }
       if(!isFirst || startElement == null) {
         svgContent.addLineConnector(x, y1, x + 5, y1);
         x += 5;
@@ -364,6 +379,11 @@ public class RRDiagram {
       if(!isLast || endElement == null) {
         svgContent.addLineConnector(x, y1, x + 5, y1);
         x += 5;
+      }
+      if(!isLast && isShowingConnectorLineContinuations) {
+        svgContent.addLineConnector(x + 2, y1, x + 4, y1);
+        svgContent.addLineConnector(x + 6, y1, x + 8, y1);
+        x += 8;
       }
       yOffset += height2 + 10;
     }

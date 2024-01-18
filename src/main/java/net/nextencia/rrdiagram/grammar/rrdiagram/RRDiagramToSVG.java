@@ -246,6 +246,16 @@ public class RRDiagramToSVG {
     return specialSequenceFillColor;
   }
 
+  private boolean isShowingConnectorLineContinuations;
+
+  public void setShowingConnectorLineContinuations(boolean isShowingConnectorLineContinuations) {
+    this.isShowingConnectorLineContinuations = isShowingConnectorLineContinuations;
+  }
+
+  public boolean isShowingConnectorLineContinuations() {
+    return isShowingConnectorLineContinuations;
+  }
+
   private RRElement startElement = null;
 
   public void setStartElement(RRElement startElement) {
