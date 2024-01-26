@@ -246,14 +246,21 @@ public class RRDiagramToSVG {
     return specialSequenceFillColor;
   }
 
-  private boolean isShowingConnectorLineContinuations;
-
-  public void setShowingConnectorLineContinuations(boolean isShowingConnectorLineContinuations) {
-    this.isShowingConnectorLineContinuations = isShowingConnectorLineContinuations;
+  public static enum LineContinuationType {
+    NONE, ELLIPSIS, PATH,
   }
 
-  public boolean isShowingConnectorLineContinuations() {
-    return isShowingConnectorLineContinuations;
+  private LineContinuationType lineContinuationType = LineContinuationType.NONE;
+
+  public void setLineContinuationType(LineContinuationType lineContinuationType) {
+    if(lineContinuationType == null) {
+      lineContinuationType = LineContinuationType.NONE;
+    }
+    this.lineContinuationType = lineContinuationType;
+  }
+
+  public LineContinuationType getLineContinuationType() {
+    return lineContinuationType;
   }
 
   private boolean isLeftAligned = true;

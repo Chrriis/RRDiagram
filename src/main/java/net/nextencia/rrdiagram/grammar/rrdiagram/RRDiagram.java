@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.nextencia.rrdiagram.common.Utils;
+import net.nextencia.rrdiagram.grammar.rrdiagram.RRDiagramToSVG.LineContinuationType;
 import net.nextencia.rrdiagram.grammar.rrdiagram.RRElement.LayoutInfo;
 
 /**
@@ -329,7 +330,8 @@ public class RRDiagram {
         rrElementList.set(rrElementListCount - 1, new RRSequence(rrElementList.get(rrElementListCount - 1), endElement));
       }
     }
-    boolean isShowingConnectorLineContinuations = rrDiagramToSVG.isShowingConnectorLineContinuations();
+    LineContinuationType lineContinuationType = rrDiagramToSVG.getLineContinuationType();
+    boolean isWithLineContinuation = lineContinuationType != LineContinuationType.NONE;
     int width = 5;
     int height = 5;
     for (int i = 0; i < rrElementListCount; i++) {
@@ -342,20 +344,26 @@ public class RRDiagram {
       rrElement.computeLayoutInfo(rrDiagramToSVG);
       LayoutInfo layoutInfo = rrElement.getLayoutInfo();
       int computedWidth = 5 + layoutInfo.getWidth() + 5;
-      if(!isFirst && isShowingConnectorLineContinuations) {
+      if(!isFirst && isWithLineContinuation) {
         computedWidth += 8;
       }
-      if(!isLast && isShowingConnectorLineContinuations) {
+      if(!isLast && isWithLineContinuation) {
         computedWidth += 8;
       }
       width = Math.max(width, computedWidth);
       height += layoutInfo.getHeight() + 5;
+      if(lineContinuationType == LineContinuationType.PATH) {
+        height += 20;
+      }
     }
     boolean isLeftAligned = rrDiagramToSVG.isLeftAligned();
     SvgContent svgContent = new SvgContent();
     // First, generate the XML for the elements, to know the usage.
     int xOffset = 0;
     int yOffset = 5;
+    int lastConnexionEndX = -1;
+    int lastConnexionEndY = -1;
+    int interLineY = -1;
     for (int i = 0; i < rrElementListCount; i++) {
       RRElement rrElement = rrElementList.get(i);
       boolean isFirst = i == 0;
@@ -368,14 +376,34 @@ public class RRDiagram {
       int x = xOffset;
       if(!isLeftAligned && !isFirst) {
         if(isLast) {
-          x += 5 + width - (5 + width2 + 5 + (isShowingConnectorLineContinuations? 8: 0));
+          x += 5 + width - (5 + width2 + 5 + (isWithLineContinuation? 8: 0));
         } else {
-          x += (width - (5 + width2 + 5 + (isShowingConnectorLineContinuations? 2 * 8: 0))) / 2;
+          x += (width - (5 + width2 + 5 + (isWithLineContinuation? 2 * 8: 0))) / 2;
         }
       }
-      if(!isFirst && isShowingConnectorLineContinuations) {
-        svgContent.addLineConnector(x, y1, x + 2, y1);
-        svgContent.addLineConnector(x + 4, y1, x + 6, y1);
+      if(!isFirst && isWithLineContinuation) {
+        switch(lineContinuationType) {
+          case ELLIPSIS: {
+            svgContent.addLineConnector(x, y1, x + 2, y1);
+            svgContent.addLineConnector(x + 4, y1, x + 6, y1);
+            break;
+          }
+          case PATH: {
+            int newConnexionEndX = x + 8;
+            int newConnexionEndY = y1;
+            // End of previous: curve forward, vertical down, curve backward
+            svgContent.addPathConnector(lastConnexionEndX, lastConnexionEndY, "q5 0 5 5", lastConnexionEndX + 5, lastConnexionEndY + 5);
+            svgContent.addLineConnector(lastConnexionEndX + 5, lastConnexionEndY + 5, lastConnexionEndX + 5, interLineY - 5);
+            svgContent.addPathConnector(lastConnexionEndX + 5, interLineY - 5, "q0 5-5 5", lastConnexionEndX, interLineY);
+            // Middle line
+            svgContent.addLineConnector(lastConnexionEndX, interLineY, newConnexionEndX, interLineY);
+            // Start of next: curve backward, vertical down, curve forward
+            svgContent.addPathConnector(newConnexionEndX, interLineY, "q-5 0-5 5", newConnexionEndX - 5, interLineY + 5);
+            svgContent.addLineConnector(newConnexionEndX - 5, interLineY + 5, newConnexionEndX - 5, newConnexionEndY - 5);
+            svgContent.addPathConnector(newConnexionEndX - 5, newConnexionEndY - 5, "q0 5 5 5", newConnexionEndX, newConnexionEndY);
+            break;
+          }
+        }
         x += 8;
       }
       if(!isFirst || startElement == null) {
@@ -388,12 +416,27 @@ public class RRDiagram {
         svgContent.addLineConnector(x, y1, x + 5, y1);
         x += 5;
       }
-      if(!isLast && isShowingConnectorLineContinuations) {
-        svgContent.addLineConnector(x + 2, y1, x + 4, y1);
-        svgContent.addLineConnector(x + 6, y1, x + 8, y1);
+      if(!isLast && isWithLineContinuation) {
+        switch(lineContinuationType) {
+          case ELLIPSIS: {
+            svgContent.addLineConnector(x + 2, y1, x + 4, y1);
+            svgContent.addLineConnector(x + 6, y1, x + 8, y1);
+            break;
+          }
+          case PATH: {
+            lastConnexionEndX = x;
+            lastConnexionEndY = y1;
+            break;
+          }
+        }
         x += 8;
       }
       yOffset += height2 + 10;
+      if(lineContinuationType == LineContinuationType.PATH) {
+        yOffset += 5;
+        interLineY = yOffset;
+        yOffset += 15;
+      }
     }
     String connectorElement = svgContent.getConnectorElement(rrDiagramToSVG);
     String elements = svgContent.getElements();
