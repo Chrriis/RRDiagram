@@ -256,6 +256,16 @@ public class RRDiagramToSVG {
     return isShowingConnectorLineContinuations;
   }
 
+  private boolean isLeftAligned = true;
+
+  public void setLeftAligned(boolean isLeftAligned) {
+    this.isLeftAligned = isLeftAligned;
+  }
+
+  public boolean isLeftAligned() {
+    return isLeftAligned;
+  }
+
   private RRElement startElement = null;
 
   public void setStartElement(RRElement startElement) {

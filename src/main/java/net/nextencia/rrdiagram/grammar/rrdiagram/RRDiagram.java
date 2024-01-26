@@ -351,6 +351,7 @@ public class RRDiagram {
       width = Math.max(width, computedWidth);
       height += layoutInfo.getHeight() + 5;
     }
+    boolean isLeftAligned = rrDiagramToSVG.isLeftAligned();
     SvgContent svgContent = new SvgContent();
     // First, generate the XML for the elements, to know the usage.
     int xOffset = 0;
@@ -365,6 +366,13 @@ public class RRDiagram {
       int height2 = layoutInfo2.getHeight();
       int y1 = yOffset + connectorOffset2;
       int x = xOffset;
+      if(!isLeftAligned && !isFirst) {
+        if(isLast) {
+          x += 5 + width - (5 + width2 + 5 + (isShowingConnectorLineContinuations? 8: 0));
+        } else {
+          x += (width - (5 + width2 + 5 + (isShowingConnectorLineContinuations? 2 * 8: 0))) / 2;
+        }
+      }
       if(!isFirst && isShowingConnectorLineContinuations) {
         svgContent.addLineConnector(x, y1, x + 2, y1);
         svgContent.addLineConnector(x + 4, y1, x + 6, y1);
